@@ -1,0 +1,34 @@
+<template>
+  <div class="page" data-name="home">
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner sliding">
+        <div class="title">Bluetooth connection</div>
+      </div>
+    </div>
+
+    <!-- Scrollable page content-->
+    <div class="page-content">
+      <div class="block"><a href="" class="button button-fill button-round" style="width: 70%; margin: 0 auto;" @click="${connect}">Connect</a></div>
+      
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    let deviceID = '98:D3:31:30:76:18'
+    const connect = () => {
+      try {
+        ble.startScan([], function (device) {
+          if (device.id == deviceID) {
+            alert('that is it!')
+          }
+        }, () => { alert('fail') });
+      }
+      catch (err) {
+        alert(err)
+      }
+    }
+    return $render;
+  }
+</script>

@@ -1,0 +1,56 @@
+<template>
+  <div class="page" data-name="settings">
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner sliding">
+        <div class="title">Settings</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="block"><a id="search_devices_btn" href="" class="button button-fill button-round"
+          style="width: 70%; margin: 0 auto;" @click="${search}">Search devices</a></div>
+      <div class="list simple-list">
+        <ul id="devices_list">
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    let deviceID = '98:D3:31:30:76:18';
+
+    let state = "stop";
+    const search = () => {
+      try {
+        if (state == "stop") {
+          state = "started";
+          document.getElementById('devices_list').innerHTML = "";
+          document.getElementById('search_devices_btn').innerHTML = "Stop search";
+          ble.startScan([],
+            // On scan successful
+            function (device) {
+              var str = `
+              <li><div class="item-inner">
+                <div class="item-subtitle">${device.name}</div>
+                <div class="item-text">${device.id}</div>
+              </div></li>`
+              document.getElementById('devices_list').insertAdjacentHTML('beforeend', str)
+            }, () => { alert('start fail') });
+        }
+        else {
+          ble.stopScan(
+            // On stop successful  
+            () => {
+              state = "stop";
+              document.getElementById('search_devices_btn').innerHTML = "Search devices";
+            }, () => { alert('stop fail') });
+        }
+      }
+      catch (err) {
+        alert(err)
+      }
+    }
+    return $render;
+  };
+</script>
