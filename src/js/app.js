@@ -7,6 +7,7 @@ import 'framework7/framework7-bundle.css';
 // Import Icons and App Custom Styles
 import '../css/icons.css';
 import '../css/app.css';
+import '../css/padlock.css';
 // Import Cordova APIs
 import cordovaApp from './cordova-app.js';
 
@@ -24,7 +25,7 @@ var app = new Framework7({
   theme: 'auto', // Automatic theme detection
   el: '#app', // App root element
   component: App, // App main component
-  id: 'io.framework7.myapp', // App bundle ID
+  id: 'ru.devredowl.smartswitch', // App bundle ID
   // App store
   store: store,
   // App routes

@@ -9,24 +9,131 @@
 
     <!-- Scrollable page content-->
     <div class="page-content">
-      <div class="block"><a href="" class="button button-fill button-round" style="width: 70%; margin: 0 auto;" @click="${connect}">Connect</a></div>
-      
+
+      <div class="block"
+        style="margin-top: 10vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div id="padlock" class="padlock">
+          <div class="keyhole"></div>
+        </div>
+      </div>
+
+      <!-- <div class="block"><a href="" class="button button-fill button-round" style="width: 70%; margin: 0 auto;"
+          @click="${connect}">Connect</a></div> -->
+
     </div>
   </div>
 </template>
 <script>
-  export default () => {
-    let deviceID = '98:D3:31:30:76:18'
-    const connect = () => {
-      try {
-        ble.startScan([], function (device) {
-          if (device.id == deviceID) {
-            alert('that is it!')
-          }
-        }, () => { alert('fail') });
+  // Includes
+  import SettingsModel from '../js/models/settingsModel.js';
+
+  export default (props, { $f7, $, $on }) => {
+    // Ux elements
+    let padlock;
+    function openKeyPadlock() {
+      padlock.classList.add('keyunlock');
+    };
+    function openPadlock() {
+      padlock.classList.add('unlock');
+    };
+    function closePadlock() {
+      padlock.classList.remove('unlock');
+      padlock.classList.remove('keyunlock');
+    };
+    function shakePadlock() {
+      padlock.classList.remove('unlock');
+      padlock.classList.remove('keyunlock');
+      padlock.classList.add('shake');
+      setTimeout(() => padlock.classList.remove('shake'), 820);
+    }
+    // TODO: For debugging
+    window.shake = shakePadlock, window.openP = openPadlock, window.openK = openKeyPadlock;
+
+    // String to array buf
+    function stringToBytes(string) {
+      var array = new Uint8Array(string.length);
+      for (var i = 0, l = string.length; i < l; i++) {
+        array[i] = string.charCodeAt(i);
       }
-      catch (err) {
-        alert(err)
+      return array.buffer;
+    }
+
+    // Set variables when page ready
+    $(document).on('page:init', function (e) {
+      padlock = $('#padlock')[0];
+      //padlock.addEventListener('click', () => padlock.classList.contains('unlock') ? closePadlock() : openPadlock());
+      padlock.addEventListener('click', connect);
+    })
+
+    // https://github.com/don/cordova-plugin-ble-central#writewithoutresponse
+    // UUIDs can be parsed from device data
+    let deviceID = '42CD224E-4010-E4CB-7EF5-FA70B19B7A5E' // 98:D3:31:30:76:18
+    const connect = () => {
+      openKeyPadlock();
+      // TODO: В теории можно избавиться от сканирования устройств здесь
+      // А в настройках сделать вывод сигнатуры устройства при клике по нему
+      let cb = () =>
+        ble.startScan([],
+          (device) => {
+            if (device.id == deviceID) {
+              console.log('that is it!');
+              ble.stopScan(
+                () => {
+                  try {
+                    ble.connect(device.id,
+                      // On connect success
+                      (data) => {
+                        //console.log(data);
+                        console.log('Connected');
+                        //var uintarr = new Uint8Array([0xFF, 0xFF]);
+                        ble.writeWithoutResponse(
+                          // DATA
+                          device.id,
+                          'FFE0', // service_uuid 
+                          'FFE1', // characteristic_uuid 
+                          stringToBytes(SettingsModel.get().authCode), // uintarr.buffer
+                          // ON WRITE SUCCESS
+                          () => {
+                            try {
+                              // Открываем замок и вскоре закрываем, если удалось отправить запрос
+                              openPadlock();
+                              setTimeout(closePadlock, 2000);
+                              console.log('Data written');
+                            } catch (error) {
+                              console.log(error.message, error.trace);
+                              shakePadlock();
+                            }
+                            // Disconnect
+                            setTimeout(() => ble.disconnect(deviceID), 2000);
+                          },
+                          // DISCONNECT IF WRITE ERROR
+                          () => {
+                            console.log('Write error');
+                            // Disconnect
+                            shakePadlock();
+                            // Отключаемся от устройства
+                            setTimeout(() => ble.disconnect(deviceID), 2000);
+                          });
+                      },
+                      // On disconnect
+                      () => console.log('Disconnected'));
+                  }
+                  catch (ex) {
+                    console.log('Error', ex.message, ex.stack);
+                    shakePadlock();
+                  }
+                },
+                () => console.log('Stop scan fault')
+              )
+            }
+          },
+          () => { console.log('Totalen bruh'); shakePadlock(); });
+      // Stopping scan and starting new scan
+      try {
+        ble.stopScan(cb, cb);
+      } catch (error) {
+        shakePadlock();
+        console.log("It seems that this device doesn't support Bluetooth LE\n", error);
       }
     }
     return $render;

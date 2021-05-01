@@ -33,7 +33,7 @@
               var str = `
               <li><div class="item-inner">
                 <div class="item-subtitle">${device.name}</div>
-                <div class="item-text">${device.id}</div>
+                <div class="item-text" style="font-size: 9px;">${device.id}</div>
               </div></li>`
               document.getElementById('devices_list').insertAdjacentHTML('beforeend', str)
             }, () => { alert('start fail') });
