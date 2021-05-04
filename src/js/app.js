@@ -21,8 +21,8 @@ import App from '../app.f7.html';
 
 var device = getDevice();
 var app = new Framework7({
-  name: 'My App', // App name
-  theme: 'auto', // Automatic theme detection
+  name: 'SmartSwitch', // App name
+  theme: 'ios', // auto - Automatic theme detection
   el: '#app', // App root element
   component: App, // App main component
   id: 'ru.devredowl.smartswitch', // App bundle ID

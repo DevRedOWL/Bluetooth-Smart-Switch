@@ -1,5 +1,14 @@
 
 /* Lock settings */  
+.padlock-parent{
+    top: 50%;
+    margin-top: -50%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
+}
+
 .padlock {
     position: relative;
     width: 260px;

@@ -10,15 +10,14 @@
     <!-- Scrollable page content-->
     <div class="page-content">
 
-      <div class="block"
-        style="margin-top: 10vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      <div class="block padlock-parent">
         <div id="padlock" class="padlock">
           <div class="keyhole"></div>
         </div>
       </div>
 
       <!-- <div class="block"><a href="" class="button button-fill button-round" style="width: 70%; margin: 0 auto;"
-          @click="${connect}">Connect</a></div> -->
+          @click="${ConnectAndSend}">Connect</a></div> -->
 
     </div>
   </div>
@@ -26,6 +25,7 @@
 <script>
   // Includes
   import SettingsModel from '../js/models/settingsModel.js';
+  import debugToast from '../js/debugToaster.js';
 
   export default (props, { $f7, $, $on }) => {
     // Ux elements
@@ -59,81 +59,59 @@
     }
 
     // Set variables when page ready
-    $(document).on('page:init', function (e) {
+    $(document).on('page:init', '.page[data-name="home"]', function (e) {
+      // [!] Интересное замечание - даже если в закоменченном куске html кода есть несуществующая функция - не соберется
       padlock = $('#padlock')[0];
       //padlock.addEventListener('click', () => padlock.classList.contains('unlock') ? closePadlock() : openPadlock());
-      padlock.addEventListener('click', connect);
+      padlock.addEventListener('click', () => ConnectAndSend());
     })
 
-    // https://github.com/don/cordova-plugin-ble-central#writewithoutresponse
-    // UUIDs can be parsed from device data
-    let deviceID = '42CD224E-4010-E4CB-7EF5-FA70B19B7A5E' // 98:D3:31:30:76:18
-    const connect = () => {
+    // Send a request
+    function ConnectAndSend(deviceUUID = SettingsModel.get().deviceUUID, authCode = SettingsModel.get().authCode) {
       openKeyPadlock();
-      // TODO: В теории можно избавиться от сканирования устройств здесь
-      // А в настройках сделать вывод сигнатуры устройства при клике по нему
-      let cb = () =>
-        ble.startScan([],
-          (device) => {
-            if (device.id == deviceID) {
-              console.log('that is it!');
-              ble.stopScan(
-                () => {
-                  try {
-                    ble.connect(device.id,
-                      // On connect success
-                      (data) => {
-                        //console.log(data);
-                        console.log('Connected');
-                        //var uintarr = new Uint8Array([0xFF, 0xFF]);
-                        ble.writeWithoutResponse(
-                          // DATA
-                          device.id,
-                          'FFE0', // service_uuid 
-                          'FFE1', // characteristic_uuid 
-                          stringToBytes(SettingsModel.get().authCode), // uintarr.buffer
-                          // ON WRITE SUCCESS
-                          () => {
-                            try {
-                              // Открываем замок и вскоре закрываем, если удалось отправить запрос
-                              openPadlock();
-                              setTimeout(closePadlock, 2000);
-                              console.log('Data written');
-                            } catch (error) {
-                              console.log(error.message, error.trace);
-                              shakePadlock();
-                            }
-                            // Disconnect
-                            setTimeout(() => ble.disconnect(deviceID), 2000);
-                          },
-                          // DISCONNECT IF WRITE ERROR
-                          () => {
-                            console.log('Write error');
-                            // Disconnect
-                            shakePadlock();
-                            // Отключаемся от устройства
-                            setTimeout(() => ble.disconnect(deviceID), 2000);
-                          });
-                      },
-                      // On disconnect
-                      () => console.log('Disconnected'));
-                  }
-                  catch (ex) {
-                    console.log('Error', ex.message, ex.stack);
-                    shakePadlock();
-                  }
-                },
-                () => console.log('Stop scan fault')
-              )
-            }
-          },
-          () => { console.log('Totalen bruh'); shakePadlock(); });
-      // Stopping scan and starting new scan
+      // TODO: Сделать в настройках сделать вывод сигнатуры устройства при клике по нему
+      // Trying to connect to a device
       try {
-        ble.stopScan(cb, cb);
-      } catch (error) {
+        ble.connect(deviceUUID,
+          // On connect success
+          (connectData) => {
+            console.log('Device connected');
+            ble.writeWithoutResponse(
+              // Request data
+              deviceUUID,
+              'FFE0', // service_uuid 
+              'FFE1', // characteristic_uuid 
+              stringToBytes(authCode), // new Uint8Array([0xFF, 0xFF]).buffer;
+              // On write success callback
+              () => {
+                try {
+                  // Open animation and close it soon, if data succesfully written
+                  openPadlock();
+                  setTimeout(closePadlock, 2000);
+                  console.log('Data written');
+                } catch (error) {
+                  console.log(error.message, error.trace);
+                  shakePadlock();
+                }
+                // Disconnect
+                setTimeout(() => ble.disconnect(deviceUUID), 2000);
+              },
+              // On write error disconnect
+              () => {
+                debugToast($f7, 'Write error');
+                shakePadlock(); // Disconnect animation            
+                setTimeout(() => ble.disconnect(deviceUUID), 2000); // Отключаемся от устройства
+              });
+          },
+          // On device disconnected or error
+          () => {
+            debugToast($f7, 'Device is not available or suddeny disconnected');
+            shakePadlock();
+          });
+      }
+      catch (error) {
         shakePadlock();
-        console.log("It seems that this device doesn't support Bluetooth LE\n", error);
+        debugToast($f7, "It seems that this device doesn't support Bluetooth LE<br>", error);
       }
     }
     return $render;

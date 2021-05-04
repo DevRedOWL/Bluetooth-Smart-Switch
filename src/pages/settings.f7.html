@@ -8,7 +8,7 @@
     </div>
     <div class="page-content">
       <div class="block"><a id="search_devices_btn" href="" class="button button-fill button-round"
-          style="width: 70%; margin: 0 auto;" @click="${search}">Search devices</a></div>
+          style="width: 70%; margin: 0 auto;" @click="${searchDevices}">Search devices</a></div>
       <div class="list simple-list">
         <ul id="devices_list">
         </ul>
@@ -17,16 +17,26 @@
   </div>
 </template>
 <script>
-  export default () => {
-    let deviceID = '98:D3:31:30:76:18';
+  // Includes
+  import debugToast from '../js/debugToaster.js';
 
+  export default (props, { $f7, $, $on }) => {
+    // State management
     let state = "stop";
-    const search = () => {
+    function scanStarted() {
+      state = "started";
+      document.getElementById('devices_list').innerHTML = "";
+      document.getElementById('search_devices_btn').innerHTML = "Stop search";
+    }
+    function scanStopped() {
+      state = "stop";
+      document.getElementById('search_devices_btn').innerHTML = "Search devices";
+    }
+
+    // Search function
+    const searchDevices = () => {
       try {
         if (state == "stop") {
-          state = "started";
-          document.getElementById('devices_list').innerHTML = "";
-          document.getElementById('search_devices_btn').innerHTML = "Stop search";
           ble.startScan([],
             // On scan successful
             function (device) {
@@ -36,21 +46,27 @@
                 <div class="item-text" style="font-size: 9px;">${device.id}</div>
               </div></li>`
               document.getElementById('devices_list').insertAdjacentHTML('beforeend', str)
-            }, () => { alert('start fail') });
+            },
+            () => {
+              console.toast('Unable to scan devices');
+              scanStopped();
+            });
+          scanStarted();
         }
         else {
+          scanStopped();
           ble.stopScan(
             // On stop successful  
-            () => {
-              state = "stop";
-              document.getElementById('search_devices_btn').innerHTML = "Search devices";
-            }, () => { alert('stop fail') });
+            () => { },
+            // On stop error
+            () => { console.toast('Scan stopping failed') });
         }
       }
-      catch (err) {
-        alert(err)
+      catch (error) {
+        debugToast($f7, "It seems that this device doesn't support Bluetooth LE<br>", error);
       }
     }
+
     return $render;
   };
 </script>
