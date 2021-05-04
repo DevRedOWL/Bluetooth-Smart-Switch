@@ -30,8 +30,10 @@ var app = new Framework7({
   store: store,
   // App routes
   routes: routes,
-
-
+  // Touch settings
+  touch: {
+    tapHold: true //enable tap hold events
+  },
   // Input settings
   input: {
     scrollIntoViewOnFocus: device.cordova && !device.electron,

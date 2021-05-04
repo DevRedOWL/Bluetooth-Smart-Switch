@@ -3,7 +3,7 @@
     <div class="navbar">
       <div class="navbar-bg"></div>
       <div class="navbar-inner sliding">
-        <div class="title">Bluetooth connection</div>
+        <div class="title">Bluetooth lock</div>
       </div>
     </div>
 
@@ -16,8 +16,10 @@
         </div>
       </div>
 
-      <!-- <div class="block"><a href="" class="button button-fill button-round" style="width: 70%; margin: 0 auto;"
-          @click="${ConnectAndSend}">Connect</a></div> -->
+      <!-- <div class="block">
+        <a href="" class="button button-fill button-round" style="width: 70%; margin: 0 auto;"
+          @click="${ConnectAndSend}">Click</a>
+      </div> -->
 
     </div>
   </div>
@@ -31,9 +33,11 @@
     // Ux elements
     let padlock;
     function openKeyPadlock() {
+      tryVibrate(8);
       padlock.classList.add('keyunlock');
     };
     function openPadlock() {
+      new Audio('./static/IphoneLock.mp3').play();
       padlock.classList.add('unlock');
     };
     function closePadlock() {
@@ -41,6 +45,7 @@
       padlock.classList.remove('keyunlock');
     };
     function shakePadlock() {
+      tryVibrate(140);
       padlock.classList.remove('unlock');
       padlock.classList.remove('keyunlock');
       padlock.classList.add('shake');
@@ -58,12 +63,20 @@
       return array.buffer;
     }
 
+    // cordova-plugin-vibrate
+    function tryVibrate(time) {
+      try { navigator.vibrate(time); return true; }
+      catch (error) { return false; }
+    }
+
     // Set variables when page ready
     $(document).on('page:init', '.page[data-name="home"]', function (e) {
       // [!] Интересное замечание - даже если в закоменченном куске html кода есть несуществующая функция - не соберется
       padlock = $('#padlock')[0];
       //padlock.addEventListener('click', () => padlock.classList.contains('unlock') ? closePadlock() : openPadlock());
-      padlock.addEventListener('click', () => ConnectAndSend());
+      $('#padlock').on('click', () => ConnectAndSend());
+      // FIXME: DEBUG
+      $('#padlock').on('taphold', () => { openKeyPadlock(); setTimeout(() => openPadlock(), 300); setTimeout(() => closePadlock(), 1000); });
     })
 
     // Send a request
@@ -86,9 +99,9 @@
               () => {
                 try {
                   // Open animation and close it soon, if data succesfully written
-                  openPadlock();
-                  setTimeout(closePadlock, 2000);
-                  console.log('Data written');
+                  setTimeout(openPadlock, 200);
+                  setTimeout(closePadlock, 2500);
+                  console.log('Code sent');
                 } catch (error) {
                   console.log(error.message, error.trace);
                   shakePadlock();
@@ -105,7 +118,7 @@
           },
           // On device disconnected or error
           () => {
-            debugToast($f7, 'Device is not available or suddeny disconnected');
+            debugToast($f7, 'Device is not available');
             shakePadlock();
           });
       }
