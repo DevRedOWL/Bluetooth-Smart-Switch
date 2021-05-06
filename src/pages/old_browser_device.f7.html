@@ -1,0 +1,72 @@
+<template>
+  <div class="page" data-name="settings">
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner sliding">
+        <div class="title">Settings</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="block"><a id="search_devices_btn" href="" class="button button-fill button-round"
+          style="width: 70%; margin: 0 auto;" @click="${searchDevices}">Search devices</a></div>
+      <div class="list simple-list">
+        <ul id="devices_list">
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  // Includes
+  import debugToast from '../js/debugToaster.js';
+
+  export default (props, { $f7, $, $on }) => {
+    // State management
+    let state = "stop";
+    function scanStarted() {
+      state = "started";
+      document.getElementById('devices_list').innerHTML = "";
+      document.getElementById('search_devices_btn').innerHTML = "Stop search";
+    }
+    function scanStopped() {
+      state = "stop";
+      document.getElementById('search_devices_btn').innerHTML = "Search devices";
+    }
+
+    // Search function
+    const searchDevices = () => {
+      try {
+        if (state == "stop") {
+          ble.startScan([],
+            // On scan successful
+            function (device) {
+              var str = `
+              <li><div class="item-inner">
+                <div class="item-subtitle">${device.name}</div>
+                <div class="item-text" style="font-size: 9px;">${device.id}</div>
+              </div></li>`
+              document.getElementById('devices_list').insertAdjacentHTML('beforeend', str)
+            },
+            () => {
+              console.toast('Unable to scan devices');
+              scanStopped();
+            });
+          scanStarted();
+        }
+        else {
+          scanStopped();
+          ble.stopScan(
+            // On stop successful  
+            () => { },
+            // On stop error
+            () => { console.toast('Scan stopping failed') });
+        }
+      }
+      catch (error) {
+        debugToast($f7, "It seems that this device doesn't support Bluetooth LE<br>", error);
+      }
+    }
+
+    return $render;
+  };
+</script>

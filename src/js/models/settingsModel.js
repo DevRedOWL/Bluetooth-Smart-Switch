@@ -20,17 +20,21 @@ export default class SettingsModel extends ILocalStoreable {
     set authCode(val) { this._authCode = val; }
 
     /* Device name */
-    get deviceSSID() { return this._deviceSSID ? this._deviceSSID : 'HC-08'; } // HC-06
+    get deviceSSID() { return this._deviceSSID ? this._deviceSSID : 'HC-08'; } 
     set deviceSSID(val) { this._deviceSSID = val; }
 
     /* UUIDs (Can be parsed from device data) */
-    get deviceUUID() { return this._deviceUUID ? this._deviceUUID : '64:33:DB:96:56:F1'; } // 64:33:DB:96:56:F1 98:D3:31:30:76:18
+    get deviceUUID() { return this._deviceUUID ? this._deviceUUID : '64:33:DB:96:56:F1'; } 
     set deviceUUID(val) { this._deviceUUID = val; }
 
     /* Mode: BLE / Classic */
 
     /* Service: FFE0 (BLE Only) */
+    get deviceServiceUUID() { return this._deviceServiceUUID ? this._deviceServiceUUID : 'FFE0'; }
+    set deviceServiceUUID(val) { this._deviceServiceUUID = val; }
 
     /* Characteristic: FFE1 (BLE Only) */
+    get deviceCharacteristicUUID() { return this._deviceCharacteristicUUID ? this._deviceCharacteristicUUID : 'FFE1'; }
+    set deviceCharacteristicUUID(val) { this._deviceCharacteristicUUID = val; }
 
 }

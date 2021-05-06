@@ -1,72 +1,263 @@
 <template>
-  <div class="page" data-name="settings">
-    <div class="navbar">
-      <div class="navbar-bg"></div>
-      <div class="navbar-inner sliding">
-        <div class="title">Settings</div>
-      </div>
+    <div class="page" data-name="settings">
+        <div class="page-content">
+            <!-- Select device -->
+            <div class="block" style="padding: 0 20px;">
+                <div class="block-title" style=" font-size: 25px; height: 28px; margin: 20px 0 0 5px;">
+                    <div style="display: inline-block;">Device settings</div>
+                </div>
+                <div class="img_w_bg" @click="${openDevicesSheet}"
+                    style="background-image: url(./static/deviceBG.jpeg); background-position: bottom; margin-top: 10px;">
+                    <div class="img_darker">
+                        <div style="font-size: 20px;">${settings.value.deviceSSID}</div>
+                        <div style="font-size: 10px;">${settings.value.deviceUUID}
+                            [${settings.value.deviceServiceUUID}/${settings.value.deviceCharacteristicUUID}]</div>
+                        <div style="opacity: 0.7;"><a style="color: white;" href="#view-settings"
+                                class="tab-link">Select
+                                device</a></div>
+                    </div>
+                </div>
+                <!-- Other settings -->
+                <div class="block-title" style="font-size: 25px; height: 28px; margin: 20px 0 0 5px;">
+                    Custom
+                </div>
+                <div class="img_no_bg" style="background: #058ED9;" @click="${switchDarkMode}">
+                    <div class="bg_darker">
+                        <div class="tt-icon">
+                            <i class="icon f7-icons"
+                                style="background-image: url('../static/icons/bar.png');">${settings.value.darkMode ?
+                                'sun_min' : 'moon'}</i>
+                        </div>
+                        <div class="tt-content">
+                            <div class="tt-title">${settings.value.darkMode ? 'Light' : 'Dark'} mode</div>
+                            <div class="tt-subtitle">${settings.value.darkMode ? 'Dark' : 'Light'} mode enabled</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="img_no_bg" style="background: #FF3562;" @click="${setAuthCode}">
+                    <div class="bg_darker">
+                        <div class="tt-icon">
+                            <i class="icon f7-icons" style="background-image: url('../static/icons/bar.png');">lock</i>
+                        </div>
+                        <div class="tt-content">
+                            <div class="tt-title">Access code</div>
+                            <div class="tt-subtitle" style="width: 95%; overflow: hidden;">
+                                ${settings.value.authCode.replace(/./g, '•')}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modals -->
+        <div class="sheet-modal search-devices-sheet" style="height:70vh; border-radius: 15px 15px 0 0;">
+            <div class="swipe-handler can_swipe_down" style="height: 50px"></div>
+            <div class="sheet-modal-inner">
+                <div class="sheet-modal-swipe-step can_swipe_down">
+                    <div class="padding">
+                        <div>
+                            <div class="display-flex justify-content-space-between align-items-center">
+                                <div style="font-size: 18px;"><b>Device:</b></div>
+                                <div class="yellow-text">${settings.value.deviceSSID}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="display-flex justify-content-space-between align-items-center">
+                                <div style="font-size: 18px;"><b>UUID:</b></div>
+                                <div class="yellow-text">${settings.value.deviceUUID}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="display-flex justify-content-space-between align-items-center">
+                                <div style="font-size: 18px;"><b>Service:</b></div>
+                                <div class="yellow-text">${settings.value.deviceServiceUUID}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="display-flex justify-content-space-between align-items-center">
+                                <div style="font-size: 18px;"><b>Characteristic:</b></div>
+                                <div class="yellow-text">${settings.value.deviceCharacteristicUUID}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="padding-horizontal padding-bottom">
+                        <a class="button button-large button-fill" id="searchBtn" @click="${searchDevices}">
+                            ${scanState.value ? 'Stop search' : 'Search'}
+                        </a>
+                        <div class="margin-top text-align-center">Swipe up for device list</div>
+                    </div>
+                </div>
+                <div class="block-title block-title-medium margin-top">Select device:</div>
+                <div class="list no-hairlines" style="height: calc(70vh - 332px); overflow-y: scroll;">
+                    <ul>
+                        ${
+                        btDevices.value.length ?
+                        btDevices.value.map((device) => $h`
+                        <li class="item-content" @click=${selectDevice.bind(device)}>
+                            <div class="item-inner">
+                                <div class="item-after text-color-black" style="margin-left: 0; padding-left: 0;">
+                                    <b>${device.ssid}</b>
+                                </div>
+                                <div class="item-title" style="font-size: 12px; padding-left: 10px; margin-top: 2px;">
+                                    ${device.uuid}
+                                </div>
+                            </div>
+                        </li>
+                        `)
+                        : [1,2,3,4,5,6].map((item)=>$h`
+                        <li class="item-content skeleton-text skeleton-effect-wave">
+                            <div class="item-inner">
+                                <div class="item-after text-color-black" style="margin-left: 0; padding-left: 0;">
+                                    <b>UndefinedName</b>
+                                </div>
+                                <div class="item-title" style="font-size: 12px; padding-left: 10px; margin-top: 2px;">
+                                    00:00:00:00:00:00:00:00:00:00
+                                </div>
+                            </div>
+                        </li>
+                        `)
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="page-content">
-      <div class="block"><a id="search_devices_btn" href="" class="button button-fill button-round"
-          style="width: 70%; margin: 0 auto;" @click="${searchDevices}">Search devices</a></div>
-      <div class="list simple-list">
-        <ul id="devices_list">
-        </ul>
-      </div>
-    </div>
-  </div>
 </template>
 <script>
-  // Includes
-  import debugToast from '../js/debugToaster.js';
+    import debugToast from '../js/debugToaster.js';
 
-  export default (props, { $f7, $, $on }) => {
-    // State management
-    let state = "stop";
-    function scanStarted() {
-      state = "started";
-      document.getElementById('devices_list').innerHTML = "";
-      document.getElementById('search_devices_btn').innerHTML = "Stop search";
-    }
-    function scanStopped() {
-      state = "stop";
-      document.getElementById('search_devices_btn').innerHTML = "Search devices";
-    }
+    export default (props, { $f7, $, $store }) => {
+        // State management via store object
+        const settings = $store.getters.settings;
+        const btDevices = $store.getters.btDevices;
+        const scanState = $store.getters.scanState;
+        // State encapsulation
+        const updateSettings = (propName, propValue) => { $store.dispatch('updateSettings', { propName, propValue }); }
+        const addDevice = (ssid, uuid) => { $store.dispatch('addBTDevice', { ssid, uuid }); }
+        const clearDevices = (ssid, uuid) => { $store.dispatch('clearBTDevices'); }
+        const setScanState = (newState) => { $store.dispatch('setScanState', newState); }
 
-    // Search function
-    const searchDevices = () => {
-      try {
-        if (state == "stop") {
-          ble.startScan([],
-            // On scan successful
-            function (device) {
-              var str = `
-              <li><div class="item-inner">
-                <div class="item-subtitle">${device.name}</div>
-                <div class="item-text" style="font-size: 9px;">${device.id}</div>
-              </div></li>`
-              document.getElementById('devices_list').insertAdjacentHTML('beforeend', str)
-            },
-            () => {
-              console.toast('Unable to scan devices');
-              scanStopped();
+        // UX
+        function shakeSearchBtn() {
+            tryVibrate(140);
+            searchBtn.classList.add('shake');
+            setTimeout(() => searchBtn.classList.remove('shake'), 820);
+        }
+        function tryVibrate(time) {
+            try { navigator.vibrate(time); return true; }
+            catch (error) { return false; }
+        }
+
+        // Dark mode
+        function switchDarkMode() {
+            updateSettings('darkMode', settings.value.darkMode ? false : true);
+        }
+
+        // Auth code
+        function setAuthCode() {
+            $f7.dialog.password('Enter new auth code', function (authCode) {
+                updateSettings('authCode', authCode);
+                $f7.dialog.alert('Auth code updated');
             });
-          scanStarted();
         }
-        else {
-          scanStopped();
-          ble.stopScan(
-            // On stop successful  
-            () => { },
-            // On stop error
-            () => { console.toast('Scan stopping failed') });
-        }
-      }
-      catch (error) {
-        debugToast($f7, "It seems that this device doesn't support Bluetooth LE<br>", error);
-      }
-    }
 
-    return $render;
-  };
+        // Search devies
+        function openDevicesSheet() {
+            sheet.open();
+        }
+        function selectDevice(data) {
+            $f7.dialog.confirm(`Select device ${this.ssid} with UUID ${this.uuid}?`, () => {
+                $f7.dialog.alert('Device selected');
+                updateSettings('deviceSSID', this.ssid);
+                updateSettings('deviceUUID', this.uuid);
+            });
+        }
+        function searchDevices() {
+            try {
+                if (scanState.value == false) {
+                    var scanning = function () {
+                        clearDevices();
+                        sheet.stepOpen();
+                        ble.startScan([],
+                            // On scan successful
+                            function (device) {
+                                addDevice(device.name ? device.name : 'Undefined', device.id)
+                            },
+                            () => {
+                                shakeSearchBtn();
+                                notificatie('dot_radiowaves_left_right', 'Error', 'Unable to scan devices');
+                                setScanState(false);
+                            });
+                        setScanState(true);
+                    }
+                    ble.isLocationEnabled(
+                        // If location services are enabled
+                        () => {
+                            scanning();
+                        },
+                        () => {
+                            // If not android and gps check fault - try to scan, else show error
+                            if (!$f7.device.android) scanning();
+                            else {
+                                shakeSearchBtn();
+                                notificatie('placemark', 'Search error', 'GPS is disabled', 'Enable location services to scan devices');
+                            }
+                        }
+                    );
+                }
+                else {
+                    setScanState(false);
+                    ble.stopScan(
+                        // On stop successful  
+                        () => { },
+                        // On stop error
+                        () => {
+                            shakeSearchBtn();
+                            notificatie('dot_radiowaves_left_right', 'Error', 'Scan stopping error');
+                        });
+                }
+            }
+            catch (error) {
+                shakeSearchBtn();
+                notificatie('device_laptop', 'Error', error, `It seems that this device doesn't support Bluetooth LE`);
+            }
+        }
+
+        // On window loaded
+        var sheet, searchBtn;
+        $(document).on('page:init', '.page[data-name="settings"]', function (e) {
+            sheet = $f7.sheet.create({
+                el: '.search-devices-sheet',
+                swipeHandler: '.can_swipe_down',
+                swipeToClose: true,
+                swipeToStep: true,
+                closeOnEscape: true,
+                closeOnBackdrop: true,
+                backdrop: true,
+                on: {
+                    stepOpen: function (sheet) {
+
+                    },
+                    stepClose: function (sheet) {
+
+                    },
+                    close: function (sheet) {
+                        try { } catch (error) { setScanState(false); ble.stopScan(() => { }, () => { }); }
+                    }
+                }
+            });
+            searchBtn = $('#searchBtn')[0];
+        });
+        function notificatie(icon, title, subtitle, text) {
+            $f7.notification.create({
+                icon: `<i class="f7-icons icon">${icon}</i>`,
+                title: title,
+                titleRightText: 'now',
+                subtitle: subtitle,
+                text: text,
+                closeTimeout: 2300,
+            }).open();
+        }
+
+        return $render;
+    }
 </script>

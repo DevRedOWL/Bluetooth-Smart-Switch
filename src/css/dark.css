@@ -4,9 +4,35 @@ body.theme-dark .page {
 }
 
 body.theme-dark .tabbar .tab-link-active, .theme-dark .tabbar-labels .tab-link-active {
-    color: #f2bc23
+    color: #f2bc23;
 }
 
 body.theme-dark .tt-icon > i{
     color: #fff;
+}
+
+body.theme-dark .text-color-black{
+    color: #f2bc23 !important;
+}
+
+.button-fill {
+    background: #f2bc23 !important;
+    color: #000;
+}
+
+.button-fill.active-state{
+    opacity: 0.8;
+    color: #000;
+}
+
+body.theme-dark .yellow-text{
+    color: #f2bc23;
+}
+
+body.theme-dark .dialog-button{
+    color: #f2bc23;
+}
+
+body.theme-dark .list .item-content{
+    background-color: #212121;
 }

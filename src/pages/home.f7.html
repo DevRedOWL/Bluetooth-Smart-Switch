@@ -51,8 +51,17 @@
       padlock.classList.add('shake');
       setTimeout(() => padlock.classList.remove('shake'), 820);
     }
-    // TODO: For debugging
-    window.shake = shakePadlock, window.openP = openPadlock, window.openK = openKeyPadlock;
+    // Notificatior
+    function notificatie(icon, title, subtitle, text) {
+      $f7.notification.create({
+        icon: `<i class="f7-icons icon">${icon}</i>`,
+        title: title,
+        titleRightText: 'now',
+        subtitle: subtitle,
+        text: text,
+        closeTimeout: 2000,
+      }).open();
+    }
 
     // String to array buf
     function stringToBytes(string) {
@@ -75,14 +84,17 @@
       padlock = $('#padlock')[0];
       //padlock.addEventListener('click', () => padlock.classList.contains('unlock') ? closePadlock() : openPadlock());
       $('#padlock').on('click', () => ConnectAndSend());
-      // FIXME: DEBUG
-      $('#padlock').on('taphold', () => { openKeyPadlock(); setTimeout(() => openPadlock(), 300); setTimeout(() => closePadlock(), 1000); });
+      // DEBUG
+      // $('#padlock').on('taphold', () => { openKeyPadlock(); setTimeout(() => openPadlock(), 300); setTimeout(() => closePadlock(), 1000); });
     })
 
     // Send a request
-    function ConnectAndSend(deviceUUID = SettingsModel.get().deviceUUID, authCode = SettingsModel.get().authCode) {
+    function ConnectAndSend(
+      deviceUUID = SettingsModel.get().deviceUUID,
+      authCode = SettingsModel.get().authCode,
+      serviceUUID = SettingsModel.get().deviceServiceUUID,
+      characteristicUUID = SettingsModel.get().deviceCharacteristicUUID) {
       openKeyPadlock();
-      // TODO: Сделать в настройках сделать вывод сигнатуры устройства при клике по нему
       // Trying to connect to a device
       try {
         ble.connect(deviceUUID,
@@ -92,8 +104,8 @@
             ble.writeWithoutResponse(
               // Request data
               deviceUUID,
-              'FFE0', // service_uuid 
-              'FFE1', // characteristic_uuid 
+              serviceUUID, // service_uuid (FFE0)
+              characteristicUUID, // characteristic_uuid (FFE1)
               stringToBytes(authCode), // new Uint8Array([0xFF, 0xFF]).buffer;
               // On write success callback
               () => {
@@ -111,20 +123,20 @@
               },
               // On write error disconnect
               () => {
-                debugToast($f7, 'Write error');
+                notificatie('wifi_slash', 'Error', `Device disconnected`);
                 shakePadlock(); // Disconnect animation            
                 setTimeout(() => ble.disconnect(deviceUUID), 2000); // Отключаемся от устройства
               });
           },
           // On device disconnected or error
           () => {
-            debugToast($f7, 'Device is not available');
+            notificatie('wifi_slash', 'Error', `Device is not available`);
             shakePadlock();
           });
       }
       catch (error) {
         shakePadlock();
-        debugToast($f7, "It seems that this device doesn't support Bluetooth LE<br>", error);
+        notificatie('device_laptop', 'Error', error, `It seems that this device doesn't support Bluetooth LE`);
       }
     }
     return $render;
