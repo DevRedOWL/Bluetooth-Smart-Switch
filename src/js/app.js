@@ -8,6 +8,8 @@ import 'framework7/framework7-bundle.css';
 import '../css/icons.css';
 import '../css/app.css';
 import '../css/padlock.css';
+import '../css/dark.css';
+import '../css/settings.css';
 // Import Cordova APIs
 import cordovaApp from './cordova-app.js';
 
@@ -41,11 +43,17 @@ var app = new Framework7({
   },
   // Cordova Statusbar settings
   statusbar: {
-    iosOverlaysWebView: true,
+    iosOverlaysWebView: false,
+    iosBackgroundColor: '#f2bc23',
     androidOverlaysWebView: false,
+    androidBackgroundColor: '#f2bc23',
   },
   on: {
     init: function () {
+      // Init dark mode
+      if (store.getters.settings.value.darkMode) $('body').addClass('theme-dark');
+      else $('body').removeClass('theme-dark');
+      //
       var f7 = this;
       if (f7.device.cordova) {
         // Init cordova APIs (see cordova-app.js)

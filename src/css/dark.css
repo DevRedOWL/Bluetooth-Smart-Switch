@@ -1,0 +1,12 @@
+/* Dark mode */
+body.theme-dark .page {
+    background-color: #161616; 
+}
+
+body.theme-dark .tabbar .tab-link-active, .theme-dark .tabbar-labels .tab-link-active {
+    color: #f2bc23
+}
+
+body.theme-dark .tt-icon > i{
+    color: #fff;
+}

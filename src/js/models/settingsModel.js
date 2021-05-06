@@ -1,11 +1,14 @@
 import ILocalStoreable from './interfaces/ILocalStoreable'
 export default class SettingsModel extends ILocalStoreable {
 
-    /* General */
-    static updateProperty(propName, value) {
+    /* Allows to update property if exists and return new object */
+    static updateProperty(propName, propValue) {
         let thisSettings = this.get();
-        thisSettings[propName] = value;
-        thisSettings.save();
+        if (propName) {
+            thisSettings[propName] = propValue;
+            thisSettings.save();
+        }
+        return thisSettings;
     }
 
     /* Appearance */
@@ -16,8 +19,12 @@ export default class SettingsModel extends ILocalStoreable {
     get authCode() { return this._authCode ? this._authCode : 'sotout'; }
     set authCode(val) { this._authCode = val; }
 
-    /* UUIDs (Can be parsed from device data) */ 
-    get deviceUUID() { return this._deviceUUID ? this._deviceUUID : '42CD224E-4010-E4CB-7EF5-FA70B19B7A5E'; } // 98:D3:31:30:76:18
+    /* Device name */
+    get deviceSSID() { return this._deviceSSID ? this._deviceSSID : 'HC-08'; } // HC-06
+    set deviceSSID(val) { this._deviceSSID = val; }
+
+    /* UUIDs (Can be parsed from device data) */
+    get deviceUUID() { return this._deviceUUID ? this._deviceUUID : '64:33:DB:96:56:F1'; } // 64:33:DB:96:56:F1 98:D3:31:30:76:18
     set deviceUUID(val) { this._deviceUUID = val; }
 
     /* Mode: BLE / Classic */
@@ -25,5 +32,5 @@ export default class SettingsModel extends ILocalStoreable {
     /* Service: FFE0 (BLE Only) */
 
     /* Characteristic: FFE1 (BLE Only) */
-    
+
 }

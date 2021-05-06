@@ -99,7 +99,7 @@
               () => {
                 try {
                   // Open animation and close it soon, if data succesfully written
-                  setTimeout(openPadlock, 200);
+                  openPadlock();
                   setTimeout(closePadlock, 2500);
                   console.log('Code sent');
                 } catch (error) {

@@ -1,0 +1,62 @@
+<template>
+    <div class="page" data-name="profile">
+        <div class="page-content">
+            <div class="block" style="padding: 0 20px;">
+                <div class="block-title" style=" font-size: 25px; height: 28px; margin: 20px 0 0 5px;">
+                    <div style="display: inline-block;">Device settings</div>
+                </div>
+                <div class="img_w_bg"
+                    style="background-image: url(./static/deviceBG.jpeg); background-position: bottom; margin-top: 10px;">
+                    <div class="img_darker">
+                        <div style="font-size: 20px;">${settings.value.deviceSSID}</div>
+                        <div style="font-size: 10px;">${settings.value.deviceUUID} [FFE0/FFE1]</div>
+                        <div style="opacity: 0.7;"><a style="color: white;" href="#view-profile" class="tab-link">Select
+                                device</a></div>
+                    </div>
+                </div>
+                <div class="block-title" style="font-size: 25px; height: 28px; margin: 20px 0 0 5px;">
+                    Custom
+                </div>
+                <div class="img_no_bg" style="background: #058ED9;" @click="${switchDarkMode}">
+                    <div class="bg_darker">
+                        <div class="tt-icon">
+                            <i class="icon f7-icons" style="background-image: url('../static/icons/bar.png');">${settings.value.darkMode ? 'sun_min' : 'moon'}</i>
+                        </div>
+                        <div class="tt-content">
+                            <div class="tt-title">${settings.value.darkMode ? 'Light' : 'Dark'} mode</div>
+                            <div class="tt-subtitle">${settings.value.darkMode ? 'Dark' : 'Light'} mode enabled</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="img_no_bg" style="background: #FF3562;">
+                    <div class="bg_darker">
+                        <div class="tt-icon">
+                            <i class="icon f7-icons" style="background-image: url('../static/icons/bar.png');">lock</i>
+                        </div>
+                        <div class="tt-content">
+                            <div class="tt-title">Access code</div>
+                            <div class="tt-subtitle">sotout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default (props, { $store }) => {
+        const settings = $store.getters.settings;
+
+        function switchDarkMode() {
+            updateSettings('darkMode', settings.value.darkMode ? false : true);
+        }
+
+        const updateSettings = (propName, propValue) => {
+            $store.dispatch('updateSettings', { propName, propValue });
+        }
+        // TODO: Debug method
+        window.updateSettings = updateSettings;
+
+        return $render;
+    }
+</script>

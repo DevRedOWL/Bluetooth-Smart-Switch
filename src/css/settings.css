@@ -1,0 +1,73 @@
+/* Buttons with bg and image */
+.img_w_bg, .img_no_bg{
+    margin: 10px 0; background-position: center; background-size: cover; border-radius: 15px;
+}
+
+/* Inner elements */
+.img_darker{
+    background: #0704073b; 
+    padding: 20px; 
+    border-radius: 15px; 
+    color: #fff;
+}
+
+.img_w_bg:active .img_darker{
+    background: #07040760;
+}
+
+.bg_darker{
+    background: #00000000;
+    padding: 10px;
+    border-radius: 15px;
+    /* For children */
+    display: flex;
+    justify-content: flex-start;
+    overflow: hidden;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.img_no_bg:active .bg_darker{
+    background: #0704073b;
+}
+
+/* Button content */
+.tt-icon{
+    width: 50px; 
+    height: 50px; 
+    margin: 0 10px; 
+    /* background: var(--f7-theme-color); */
+    background: transparent;  
+    margin-left: -5px;
+}
+
+.tt-icon > i{
+    color: #000; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 26px !important; 
+}
+
+.tt-name{
+    font-size: medium;
+}
+
+.tt-title{
+     font-size: var(--f7-timeline-item-title-font-size); 
+    font-weight: var(--f7-timeline-item-title-font-weight);
+    line-height: var(--f7-timeline-item-title-line-height);
+}
+
+.tt-subtitle{
+    font-size: var(--f7-timeline-item-subtitle-font-size); 
+    font-weight: var(--f7-timeline-item-subtitle-font-weight);
+    line-height: var(--f7-timeline-item-subtitle-line-height);
+}
+
+.tt-content {
+    margin: 2px;
+    min-width: 0;
+    position: relative;
+    flex-shrink: 10;
+}
