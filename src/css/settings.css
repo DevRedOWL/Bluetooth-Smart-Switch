@@ -89,3 +89,15 @@
     position: relative;
     flex-shrink: 10;
 }
+
+.skeleton-text div{
+    /* padding: 0; */
+}
+
+.settings-modal-right-text {
+    /* font-size: 12px; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 40px;
+    white-space: pre;
+}

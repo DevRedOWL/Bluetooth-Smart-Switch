@@ -1,4 +1,6 @@
-import ILocalStoreable from './interfaces/ILocalStoreable'
+import ILocalStoreable from './interfaces/ILocalStoreable';
+import { getDevice } from 'framework7';
+
 export default class SettingsModel extends ILocalStoreable {
 
     /* Allows to update property if exists and return new object */
@@ -15,16 +17,24 @@ export default class SettingsModel extends ILocalStoreable {
     get darkMode() { return this._darkMode ? true : false; }
     set darkMode(val) { this._darkMode = val; }
 
-    /* AuthCode */
-    get authCode() { return this._authCode ? this._authCode : 'sotout'; }
-    set authCode(val) { this._authCode = val; }
+    /* accessCode */
+    get accessCode() { return this._accessCode ? this._accessCode : 'sotout'; }
+    set accessCode(val) { this._accessCode = val; }
+
+    /* Home button name */
+    get deviceTag() { return this._deviceTag ? this._deviceTag : 'Home'; }
+    set deviceTag(val) { this._deviceTag = val; }
 
     /* Device name */
-    get deviceSSID() { return this._deviceSSID ? this._deviceSSID : 'HC-08'; } 
+    get deviceSSID() { return this._deviceSSID ? this._deviceSSID : 'HC-08'; }
     set deviceSSID(val) { this._deviceSSID = val; }
 
     /* UUIDs (Can be parsed from device data) */
-    get deviceUUID() { return this._deviceUUID ? this._deviceUUID : '64:33:DB:96:56:F1'; } 
+    get deviceUUID() {
+        return this._deviceUUID
+            ? this._deviceUUID
+            : (getDevice().ios ? '42CD224E-4010-E4CB-7EF5-FA70B19B7A5E' : '64:33:DB:96:56:F1');
+    }
     set deviceUUID(val) { this._deviceUUID = val; }
 
     /* Mode: BLE / Classic */

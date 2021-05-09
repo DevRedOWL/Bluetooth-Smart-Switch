@@ -10,7 +10,7 @@
           <a href="#view-home" class="tab-link tab-link-active">
             <i class="icon f7-icons if-not-md">house_fill</i>
             <i class="icon material-icons if-md">home</i>
-            <span class="tabbar-label">Home</span>
+            <span class="tabbar-label">${settings.value.deviceTag}</span>
           </a>
           
           <a href="#view-settings" class="tab-link">
@@ -111,7 +111,10 @@
   </div>
 </template>
 <script>
-  export default (props, { $f7, $update }) => {
+  export default (props, { $store, $f7, $update }) => {
+    // State management
+    const settings = $store.getters.settings;
+
     // Login screen demo data
     let username = '';
     let password = '';

@@ -19,7 +19,7 @@
         #eab02a 50%
     );
     border-radius: 20px 20px 100px 100px;
-    margin-top: 125px;
+    margin-top: calc(50% - 30px);
     cursor: pointer;
     /* Хитрейший трюк для анимаций с псевдоэлементами, чтобы Z-index не бился */
     transform-style: preserve-3d;

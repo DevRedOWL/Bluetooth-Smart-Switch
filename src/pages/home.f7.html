@@ -28,12 +28,13 @@
   // Includes
   import SettingsModel from '../js/models/settingsModel.js';
   import debugToast from '../js/debugToaster.js';
+  import { tapKeyVibrate, shakeVibrate } from '../js/vibrate.js'
 
   export default (props, { $f7, $, $on }) => {
     // Ux elements
     let padlock;
     function openKeyPadlock() {
-      tryVibrate(8);
+      tapKeyVibrate();
       padlock.classList.add('keyunlock');
     };
     function openPadlock() {
@@ -45,7 +46,7 @@
       padlock.classList.remove('keyunlock');
     };
     function shakePadlock() {
-      tryVibrate(140);
+      shakeVibrate();
       padlock.classList.remove('unlock');
       padlock.classList.remove('keyunlock');
       padlock.classList.add('shake');
@@ -72,12 +73,6 @@
       return array.buffer;
     }
 
-    // cordova-plugin-vibrate
-    function tryVibrate(time) {
-      try { navigator.vibrate(time); return true; }
-      catch (error) { return false; }
-    }
-
     // Set variables when page ready
     $(document).on('page:init', '.page[data-name="home"]', function (e) {
       // [!] Интересное замечание - даже если в закоменченном куске html кода есть несуществующая функция - не соберется
@@ -91,53 +86,56 @@
     // Send a request
     function ConnectAndSend(
       deviceUUID = SettingsModel.get().deviceUUID,
-      authCode = SettingsModel.get().authCode,
+      accessCode = SettingsModel.get().accessCode,
       serviceUUID = SettingsModel.get().deviceServiceUUID,
       characteristicUUID = SettingsModel.get().deviceCharacteristicUUID) {
       openKeyPadlock();
-      // Trying to connect to a device
-      try {
-        ble.connect(deviceUUID,
-          // On connect success
-          (connectData) => {
-            console.log('Device connected');
-            ble.writeWithoutResponse(
-              // Request data
-              deviceUUID,
-              serviceUUID, // service_uuid (FFE0)
-              characteristicUUID, // characteristic_uuid (FFE1)
-              stringToBytes(authCode), // new Uint8Array([0xFF, 0xFF]).buffer;
-              // On write success callback
-              () => {
-                try {
-                  // Open animation and close it soon, if data succesfully written
-                  openPadlock();
-                  setTimeout(closePadlock, 2500);
-                  console.log('Code sent');
-                } catch (error) {
-                  console.log(error.message, error.trace);
-                  shakePadlock();
-                }
-                // Disconnect
-                setTimeout(() => ble.disconnect(deviceUUID), 2000);
-              },
-              // On write error disconnect
-              () => {
-                notificatie('wifi_slash', 'Error', `Device disconnected`);
-                shakePadlock(); // Disconnect animation            
-                setTimeout(() => ble.disconnect(deviceUUID), 2000); // Отключаемся от устройства
-              });
-          },
-          // On device disconnected or error
-          () => {
-            notificatie('wifi_slash', 'Error', `Device is not available`);
-            shakePadlock();
-          });
-      }
-      catch (error) {
-        shakePadlock();
-        notificatie('device_laptop', 'Error', error, `It seems that this device doesn't support Bluetooth LE`);
-      }
+      // Connect to device in 200ms to proper aniation cycle
+      setTimeout(() => {
+        // Trying to connect to a device
+        try {
+          ble.connect(deviceUUID,
+            // On connect success
+            (connectData) => {
+              console.log('Device connected');
+              ble.writeWithoutResponse(
+                // Request data
+                deviceUUID,
+                serviceUUID,
+                characteristicUUID,
+                stringToBytes(accessCode),
+                // On write success callback
+                () => {
+                  try {
+                    // Open animation and close it soon, if data succesfully written
+                    openPadlock();
+                    setTimeout(closePadlock, 2500);
+                    console.log('Code sent');
+                  } catch (error) {
+                    console.log(error.message, error.trace);
+                    shakePadlock();
+                  }
+                  // Disconnect
+                  setTimeout(() => ble.disconnect(deviceUUID), 2000);
+                },
+                // On write error disconnect
+                () => {
+                  notificatie('wifi_slash', 'Error', `Device disconnected`);
+                  shakePadlock(); // Disconnect animation            
+                  setTimeout(() => ble.disconnect(deviceUUID), 2000); // Отключаемся от устройства
+                });
+            },
+            // On device disconnected or error
+            () => {
+              notificatie('wifi_exclamationmark', 'Error', `Device is not available`);
+              shakePadlock();
+            });
+        }
+        catch (error) {
+          shakePadlock();
+          notificatie('device_laptop', 'Error', error, `It seems that this device doesn't support Bluetooth LE`);
+        }
+      }, 250);
     }
     return $render;
   }
