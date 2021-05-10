@@ -105,14 +105,16 @@
 }
 
 /* Buttons with bg color style */
-body.theme-dark .img_no_bg:nth-child(1) { background: #f7b267; } /* 058ED9 */
-body.theme-dark .img_no_bg:nth-child(2) { background: #f79d65; } /* FF3562 */
-body.theme-dark .img_no_bg:nth-child(3) { background: #f4845f; } /* 8338EC */
-body.theme-dark .img_no_bg:nth-child(4) { background: #f27059; }
-body.theme-dark .img_no_bg:nth-child(5) { background: #f25c54; }
+body.theme-dark .img_no_bg:nth-child(1) { background: #FFD000; } /* 058ED9 */
+body.theme-dark .img_no_bg:nth-child(2) { background: #FFB700; } /* FF3562 */
+body.theme-dark .img_no_bg:nth-child(3) { background: #FFA200; } /* 8338EC */
+body.theme-dark .img_no_bg:nth-child(4) { background: #FF8800; }
+body.theme-dark .img_no_bg:nth-child(5) { background: #F9722A; }
+body.theme-dark .img_no_bg:nth-child(6) { background: #F56545; }
 
-.img_no_bg:nth-child(5) { background: #240046; }
-.img_no_bg:nth-child(4) { background: #3C096C; }
-.img_no_bg:nth-child(3) { background: #5A189A; }
-.img_no_bg:nth-child(2) { background: #7B2CBF; }
-.img_no_bg:nth-child(1) { background: #9D4EDD; }
+.img_no_bg:nth-child(1) { background: #AC46A1; }
+.img_no_bg:nth-child(2) { background: #973AA8; }
+.img_no_bg:nth-child(3) { background: #822FAF; }
+.img_no_bg:nth-child(4) { background: #6D23B6; }
+.img_no_bg:nth-child(5) { background: #610fa8; }
+.img_no_bg:nth-child(6) { background: #560e8a; }

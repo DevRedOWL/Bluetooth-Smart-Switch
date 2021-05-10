@@ -3,7 +3,7 @@
     <div class="navbar">
       <div class="navbar-bg"></div>
       <div class="navbar-inner sliding">
-        <div class="title">Bluetooth lock</div>
+        <div class="title">Bluetooth ${L('LOCK')}</div>
       </div>
     </div>
 
@@ -11,7 +11,7 @@
     <div class="page-content">
 
       <div class="block padlock-parent">
-        <div id="padlock" class="padlock">
+        <div id="padlock" class="padlock" @click="${ConnectAndSend}">
           <div class="keyhole"></div>
         </div>
       </div>
@@ -27,10 +27,13 @@
 <script>
   // Includes
   import SettingsModel from '../js/models/settingsModel.js';
-  import debugToast from '../js/debugToaster.js';
   import { tapKeyVibrate, shakeVibrate } from '../js/vibrate.js'
 
-  export default (props, { $f7, $, $on }) => {
+  export default (props, { $store, $f7, $, $on }) => {
+    // Locales
+    const Locales = $store.getters.locales;
+    const L = (id) => Locales.value[id] ? Locales.value[id] : `$${id}`;
+
     // Ux elements
     let padlock;
     function openKeyPadlock() {
@@ -51,7 +54,7 @@
       padlock.classList.remove('keyunlock');
       padlock.classList.add('shake');
       setTimeout(() => padlock.classList.remove('shake'), 820);
-    }
+    };
     // Notificatior
     function notificatie(icon, title, subtitle, text) {
       $f7.notification.create({
@@ -77,11 +80,11 @@
     $(document).on('page:init', '.page[data-name="home"]', function (e) {
       // [!] Интересное замечание - даже если в закоменченном куске html кода есть несуществующая функция - не соберется
       padlock = $('#padlock')[0];
-      //padlock.addEventListener('click', () => padlock.classList.contains('unlock') ? closePadlock() : openPadlock());
-      $('#padlock').on('click', () => ConnectAndSend());
-      // DEBUG
-      // $('#padlock').on('taphold', () => { openKeyPadlock(); setTimeout(() => openPadlock(), 300); setTimeout(() => closePadlock(), 1000); });
-    })
+
+      window._1 = openKeyPadlock; window._2 = openPadlock; window._3 = closePadlock;
+    });
+    // $('#padlock').on('taphold', () => { openKeyPadlock(); setTimeout(() => openPadlock(), 300); setTimeout(() => closePadlock(), 1000); });
+
 
     // Send a request
     function ConnectAndSend(
@@ -120,20 +123,20 @@
                 },
                 // On write error disconnect
                 () => {
-                  notificatie('wifi_slash', 'Error', `Device disconnected`);
+                  notificatie('wifi_slash', L('ERROR'), L('CONNECTION_ERROR'));
                   shakePadlock(); // Disconnect animation            
                   setTimeout(() => ble.disconnect(deviceUUID), 2000); // Отключаемся от устройства
                 });
             },
             // On device disconnected or error
             () => {
-              notificatie('wifi_exclamationmark', 'Error', `Device is not available`);
+              notificatie('wifi_exclamationmark', L('ERROR'), L('DEVICE_NA'));
               shakePadlock();
             });
         }
         catch (error) {
           shakePadlock();
-          notificatie('device_laptop', 'Error', error, `It seems that this device doesn't support Bluetooth LE`);
+          notificatie('device_laptop', L('ERROR'), error, L('BLE_ERROR'));
         }
       }, 250);
     }

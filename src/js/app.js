@@ -43,10 +43,13 @@ var app = new Framework7({
   },
   // Cordova Statusbar settings
   statusbar: {
+    enabled: true,
     iosOverlaysWebView: false,
-    iosBackgroundColor: '#f2bc23',
+    iosBackgroundColor: store.getters.settings.value.darkMode ? '#f2bc23' : '#7000e0',
+    iosTextColor: store.getters.settings.value.darkMode ? 'black' : 'white',
     androidOverlaysWebView: false,
-    androidBackgroundColor: '#f2bc23',
+    androidBackgroundColor: store.getters.settings.value.darkMode ? '#f2bc23' : '#7000e0',
+    androidTextColor: store.getters.settings.value.darkMode ? 'black' : 'white'
   },
   on: {
     init: function () {

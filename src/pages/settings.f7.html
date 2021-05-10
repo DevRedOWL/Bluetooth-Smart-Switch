@@ -4,7 +4,7 @@
             <!-- Select device -->
             <div class="block" style="padding: 0 20px;">
                 <div class="block-title" style=" font-size: 25px; height: 28px; margin: 20px 0 0 5px;">
-                    <div style="display: inline-block;">Device settings</div>
+                    <div style="display: inline-block;">${L('DEVICE_SETTINGS')}</div>
                 </div>
                 <div class="img_w_bg" @click="${openDevicesSheet}"
                     style="background-image: url(./static/deviceBG.jpeg); background-position: bottom; margin-top: 10px;">
@@ -15,13 +15,14 @@
                                 style="padding-left: 4px;">[${settings.value.deviceServiceUUID}/${settings.value.deviceCharacteristicUUID}]</span>
                         </div>
                         <div style="opacity: 0.7;">
-                            <a style="color: white;" href="#view-settings" class="tab-link"> Select device</a>
+                            <a style="color: white;" href="#view-settings" class="tab-link">${settings.value.isAdmin ?
+                                L('SELECT_DEVICE') : L('VIEV_DEVICE_INFO')}</a>
                         </div>
                     </div>
                 </div>
                 <!-- Other settings -->
                 <div class="block-title" style="font-size: 25px; height: 28px; margin: 20px 0 0 5px;">
-                    Custom
+                    ${L('CUSTOM_SETTINGS')}
                 </div>
                 <div id="custom-settings">
                     <div class="img_no_bg" @click="${switchDarkMode}">
@@ -32,12 +33,17 @@
                                 </i>
                             </div>
                             <div class="tt-content">
-                                <div class="tt-title">${settings.value.darkMode ? 'Light' : 'Dark'} mode</div>
-                                <div class="tt-subtitle">${settings.value.darkMode ? 'Dark' : 'Light'} mode enabled
+                                <div class="tt-title">${settings.value.darkMode ? L('LIGHT_M') : L('DARK_M')}
+                                    ${' ' + L('THEME')}
+                                </div>
+                                <div class="tt-subtitle">${settings.value.darkMode ? L('DARK_M') : L('LIGHT_M')}
+                                    ${' ' + L('THEME_ENABLED')}
                                 </div>
                             </div>
                         </div>
                     </div>
+                    ${
+                    settings.value.isAdmin ? $h`
                     <div class="img_no_bg" @click="${setaccessCode}">
                         <div class="bg_darker">
                             <div class="tt-icon">
@@ -45,20 +51,22 @@
                                     style="background-image: url('../static/icons/bar.png');">lock</i>
                             </div>
                             <div class="tt-content">
-                                <div class="tt-title">Access code</div>
+                                <div class="tt-title">${L('ACCESS_CODE')}</div>
                                 <div class="tt-subtitle" style="width: 80%; overflow: hidden;">
                                     ${settings.value.accessCode.replace(/./g, '•')}
                                 </div>
                             </div>
                         </div>
                     </div>
+                    ` : ''
+                    }
                     <div class="img_no_bg" @click="${setDeviceTag}">
                         <div class="bg_darker">
                             <div class="tt-icon">
                                 <i class="icon f7-icons">tag</i>
                             </div>
                             <div class="tt-content">
-                                <div class="tt-title">Device tag</div>
+                                <div class="tt-title">${L('DEVICE_TAG')}</div>
                                 <div class="tt-subtitle">
                                     ${settings.value.deviceTag}
                                 </div>
@@ -71,9 +79,24 @@
                                 <i class="icon f7-icons">textformat_abc</i>
                             </div>
                             <div class="tt-content">
-                                <div class="tt-title">Language</div>
+                                <div class="tt-title"> ${L('LANGUAGE')}</div>
                                 <div class="tt-subtitle">
-                                    ${settings.value.appLanguage}
+                                    ${L('LANG_NAME')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img_no_bg" @click="${switchAdmin}">
+                        <div class="bg_darker">
+                            <div class="tt-icon">
+                                <i class="icon f7-icons">${settings.value.isAdmin ? 'square_arrow_left' : 'hammer'}</i>
+                            </div>
+                            <div class="tt-content">
+                                <div class="tt-title">
+                                    ${settings.value.isAdmin ? L('STANDART_MODE') : L('ADVANCED_MODE')}
+                                </div>
+                                <div class="tt-subtitle">
+                                    ${settings.value.isAdmin ? L('DISABLE_ADMIN_MODE') : L('ENABLE_ADMIN_MODE')}
                                 </div>
                             </div>
                         </div>
@@ -89,7 +112,7 @@
                     <div class="padding">
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
-                                <div style="font-size: 18px;"><b>Device:</b></div>
+                                <div style="font-size: 18px;"><b>${L('DEVICE')}:</b></div>
                                 <div class="accent-text settings-modal-right-text">${settings.value.deviceSSID}</div>
                             </div>
                         </div>
@@ -101,14 +124,14 @@
                         </div>
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
-                                <div style="font-size: 18px;"><b>Service:</b></div>
+                                <div style="font-size: 18px;"><b>${L('SERVICE')}:</b></div>
                                 <div class="accent-text settings-modal-right-text">${settings.value.deviceServiceUUID}
                                 </div>
                             </div>
                         </div>
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
-                                <div style="font-size: 18px;"><b>Characteristic:</b></div>
+                                <div style="font-size: 18px;"><b>${L('CHARACTERISTIC')}:</b></div>
                                 <div class="accent-text settings-modal-right-text">
                                     ${settings.value.deviceCharacteristicUUID}</div>
                             </div>
@@ -116,18 +139,20 @@
                     </div>
                     <div class="padding-horizontal padding-bottom">
                         <a class="button button-large button-fill" id="searchBtn" @click="${searchDevices}">
-                            ${scanState.value ? 'Stop search' : 'Search'}
+                            ${scanState.value ? L('STOP_SEARCH') : L('SEARCH')}
                         </a>
-                        <div class="margin-top text-align-center">Swipe up for device list</div>
+                        <div class="margin-top text-align-center">${L('SWIPE_FOR_LIST')}</div>
                     </div>
                 </div>
-                <div class="block-title block-title-medium margin-top">Select device:</div>
+                <div class="block-title block-title-medium margin-top">${settings.value.isAdmin ? L('SELECT_DEVICE') :
+                    L('AVAILABLE_DEVICES')}:</div>
                 <div class="list no-hairlines" style="height: calc(70vh - 332px); overflow-y: scroll;">
                     <ul>
                         ${
                         btDevices.value.length ?
                         btDevices.value.map((device) => $h`
-                        <li class="item-content" @click=${selectDevice.bind(device)}>
+                        <li class="item-content" @click=${settings.value.isAdmin ? selectDevice.bind(device) :
+                            console.log}>
                             <div class="item-inner">
                                 <div class="item-after text-color-black" style="margin-left: 0; padding-left: 0;">
                                     <b>${device.ssid}</b>
@@ -158,21 +183,17 @@
     </div>
 </template>
 <script>
-    import debugToast from '../js/debugToaster.js';
-    import {
-        tapVibrate,
-        shakeVibrate
-    } from '../js/vibrate.js'
+    import { tapVibrate, shakeVibrate } from '../js/vibrate.js'
 
-    export default (props, {
-        $f7,
-        $,
-        $store
-    }) => {
+    export default (props, { $f7, $, $store }) => {
         // State management via store object
         const settings = $store.getters.settings;
         const btDevices = $store.getters.btDevices;
         const scanState = $store.getters.scanState;
+        // Locales
+        const Locales = $store.getters.locales;
+        const L = (id) => Locales.value[id] ? Locales.value[id] : `$${id}`;
+
         // State encapsulation
         const updateSettings = (propName, propValue) => {
             $store.dispatch('updateSettings', {
@@ -204,45 +225,70 @@
         function switchDarkMode() {
             tapVibrate();
             updateSettings('darkMode', settings.value.darkMode ? false : true);
+            $f7.statusbar.setBackgroundColor(settings.value.darkMode ? '#f2bc23' : '#7000e0');
+            $f7.statusbar.setTextColor(settings.value.darkMode ? 'black' : 'white');
             notificatie(
                 settings.value.darkMode ? 'moon' : 'sun_min',
-                'Settings',
-                `${settings.value.darkMode ? 'Dark' : 'Light'} mode enabled`
+                L('SETTINGS'),
+                `${settings.value.darkMode ? L('DARK_M') : L('LIGHT_M')} ${L('THEME_ENABLED')}`
             );
         }
 
         // Access code
         function setaccessCode() {
             tapVibrate();
-            $f7.dialog.password('Enter new access code',
+            $f7.dialog.password(L('ENTER_ACCESS_CODE'),
                 function (accessCode) {
                     if (accessCode.length > 255) {
-                        return notificatie('pencil_ellipsis_rectangle', 'Error', 'Access code can not be large, than 255 symbols');
+                        return notificatie('pencil_ellipsis_rectangle', L('ERROR'), L('ACCESS_CODE_TOO_LARGE'));
                     }
                     tapVibrate();
                     updateSettings('accessCode', accessCode);
-                    notificatie('lock', 'Settings', 'Access code updated');
+                    notificatie('lock', L('SETTINGS'), L('ACCESS_CODE_UPDATED'));
                 });
         }
 
         // Device tag
         function setDeviceTag() {
             tapVibrate();
-            $f7.dialog.prompt('Enter new device tag',
+            $f7.dialog.prompt(L('ENTER_DEVICE_TAG'),
                 function (deviceTag) {
                     if (deviceTag.length > 16) {
-                        return notificatie('pencil_ellipsis_rectangle', 'Error', 'Device tag can not be large, than 16 symbols');
+                        return notificatie('pencil_ellipsis_rectangle', L('ERROR'), L('DEVICE_TAG_TOO_LARGE'));
                     }
                     tapVibrate();
                     updateSettings('deviceTag', deviceTag);
-                    notificatie('tag', 'Settings', 'Device tag updated');
+                    notificatie('tag', L('SETTINGS'), L('DEVICE_TAG_UPDATED'));
                 });
         }
 
         function switchLanguage() {
             tapVibrate();
             updateSettings('appLanguage', settings.value.appLanguage == 'en' ? 'ru' : 'en');
-            notificatie('textformat', 'Settings', 'Application language updated');
+            $store.dispatch('updateLocales');
+            notificatie('textformat', L('SETTINGS'), L('APP_LANG_UPDATED'));
+        }
+
+        function switchAdmin() {
+            tapVibrate();
+            if (!settings.value.isAdmin) {
+                $f7.dialog.password(L('ENTER_ADMIN_PASS'),
+                    function (accessCode) {
+                        tapVibrate();
+                        if (accessCode === 'четыресловавсекапсом') {
+                            updateSettings('isAdmin', true);
+                            updateSettings('accessCode', accessCode);
+                            notificatie('person_crop_circle_badge_checkmark', L('SETTINGS'), L('ADMIN_MODE_ON'));
+                        }
+                        else {
+                            notificatie('person_crop_circle_badge_exclam', L('SETTINGS'), L('WRONG_PASS'));
+                        }
+                    });
+            }
+            else {
+                updateSettings('isAdmin', false);
+                notificatie('person', L('SETTINGS'), L('ADMIN_MODE_OFF'));
+            }
         }
 
         // Search devies
@@ -252,10 +298,10 @@
         }
 
         function selectDevice(data) {
-            $f7.dialog.confirm(`Select device ${this.ssid} with UUID ${this.uuid}?`,
+            $f7.dialog.confirm(`${L('IS_SELECT_DEVICE')} ${this.ssid} ${L('WITH')} UUID ${this.uuid}?`,
                 () => {
                     tapVibrate();
-                    notificatie('dot_radiowaves_left_right', 'Settings', 'Device selected');
+                    notificatie('dot_radiowaves_left_right', L('SETTINGS'), L('DEVICE_SELECTED'));
                     sheet.close();
                     updateSettings('deviceSSID', this.ssid);
                     updateSettings('deviceUUID', this.uuid);
@@ -272,7 +318,7 @@
                 },
                 () => {
                     shakeSearchBtn();
-                    notificatie('dot_radiowaves_left_right', 'Error', 'Unable to scan devices');
+                    notificatie('dot_radiowaves_left_right', L('ERROR'), L('UNABLE_TO_SCAN'));
                     setScanState(false);
                 });
             setScanState(true);
@@ -289,7 +335,7 @@
                         },
                         () => {
                             shakeSearchBtn();
-                            notificatie('placemark', 'Search error', 'GPS is disabled', 'Enable location services to scan devices');
+                            notificatie('placemark', L('SEARCH_ERROR'), L('GPS_IS_DISABLED'), L('PLS_ENABLE_GPS'));
                         }
                     );
                 } else {
@@ -300,13 +346,13 @@
                         // On stop error
                         () => {
                             shakeSearchBtn();
-                            notificatie('dot_radiowaves_left_right', 'Error', 'Scan stopping error');
+                            notificatie('dot_radiowaves_left_right', L('ERROR'), L('STOP_SCAN_ERROR'));
                         });
                 }
                 tapVibrate();
             } catch (error) {
                 shakeSearchBtn();
-                notificatie('device_laptop', 'Error', error, `It seems that this device doesn't support Bluetooth LE`);
+                notificatie('device_laptop', L('ERROR'), error, L('BLE_ERROR'));
             }
         }
 

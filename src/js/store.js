@@ -2,6 +2,7 @@
 import { createStore } from 'framework7';
 import $ from 'dom7';
 import SettingsModel from './models/settingsModel.js';
+import Localization from './Localization.js';
 
 const store = createStore({
   state: {
@@ -23,6 +24,7 @@ const store = createStore({
     //   },
     // ],
     settings: SettingsModel.get(),
+    locales: Localization(),
     btDevices: [
       // Mock data
       // { ssid: 'HC-01', uuid: '64:33:DB:96:56:F1' },
@@ -44,6 +46,9 @@ const store = createStore({
     },
     scanState({ state }) {
       return state.scanState;
+    },
+    locales({ state }) {
+      return state.locales;
     }
   },
   actions: {
@@ -64,6 +69,10 @@ const store = createStore({
     },
     setScanState({ state }, newState) {
       state.scanState = newState;
+    },
+    updateLocales({ state }) {
+      state.locales = Localization();
+      console.log(state.L)
     }
   },
 })

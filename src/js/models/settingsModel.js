@@ -26,7 +26,7 @@ export default class SettingsModel extends ILocalStoreable {
     set accessCode(val) { this._accessCode = val; }
 
     /* Home button name */
-    get deviceTag() { return this._deviceTag ? this._deviceTag : 'Home'; }
+    get deviceTag() { return this._deviceTag ? this._deviceTag : (this.appLanguage == 'ru' ? 'Дом' : 'Home'); }
     set deviceTag(val) { this._deviceTag = val; }
 
     /* Device name */
