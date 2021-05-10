@@ -3,36 +3,59 @@ body.theme-dark .page {
     background-color: #161616; 
 }
 
+/* Tabbar items */
 body.theme-dark .tabbar .tab-link-active, .theme-dark .tabbar-labels .tab-link-active {
     color: #f2bc23;
 }
-
-body.theme-dark .tt-icon > i{
-    color: #fff;
+.tabbar .tab-link-active, .tabbar-labels .tab-link-active {
+    color: #7000e0;
 }
 
+/* Text color */
 body.theme-dark .text-color-black{
     color: #f2bc23 !important;
 }
 
-.button-fill {
+/* Button fill */
+.button-fill{
+    background: #7000e0 !important;
+    color: #fff;
+}
+body.theme-dark .button-fill {
     background: #f2bc23 !important;
     color: #000;
 }
 
+/* Settings buttons text */
+.tt-icon > i, .tt-title,  .tt-subtitle{
+    color: #fff;
+}
+body.theme-dark .tt-icon > i, body.theme-dark .tt-title, body.theme-dark .tt-subtitle{
+    color: #000;
+}
+
+/* Active filled button */
 .button-fill.active-state{
+    opacity: 0.9;
+    color: #fff;
+}
+body.theme-dark .button-fill.active-state{
     opacity: 0.8;
     color: #000;
 }
 
-body.theme-dark .yellow-text{
+/* Accent text */
+body.theme-dark .accent-text{
     color: #f2bc23;
 }
+.accent-text{
+    color: #7000e0;
+}
 
+/* Dialog button */
 body.theme-dark .dialog-button{
     color: #f2bc23;
 }
-
 body.theme-dark .list .item-content{
     background-color: #212121;
 }

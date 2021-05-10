@@ -1,10 +1,10 @@
 {
-  "name": "my-app",
+  "name": "BluetoothSmartSwitch",
   "private": true,
   "version": "1.0.0",
-  "description": "My App",
+  "description": "SmartSwitch",
   "repository": "",
-  "license": "UNLICENSED",
+  "license": "WTFPL",
   "scripts": {
     "start": "npm run dev",
     "dev": "cross-env NODE_ENV=development webpack serve --config ./build/webpack.config.js",

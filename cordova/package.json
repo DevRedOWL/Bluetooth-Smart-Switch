@@ -1,8 +1,8 @@
 {
-  "name": "io.framework7.myapp",
-  "displayName": "My App",
+  "name": "ru.devredowl.smartswitch",
+  "displayName": "SmartSwitch",
   "version": "1.0.0",
-  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "description": "A perfect solution to contol bluetooth devices",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,8 +10,8 @@
   "keywords": [
     "ecosystem:cordova"
   ],
-  "author": "Apache Cordova Team",
-  "license": "Apache-2.0",
+  "author": "Daniel Varentsoff",
+  "license": "WTFPL",
   "devDependencies": {
     "cordova-android": "^9.1.0",
     "cordova-ios": "^6.2.0",

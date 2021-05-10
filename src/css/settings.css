@@ -18,7 +18,10 @@
 
 /* Buttons with bg and image */
 .img_w_bg, .img_no_bg{
-    margin: 10px 0; background-position: center; background-size: cover; border-radius: 15px;
+    margin: 10px 0; 
+    background-position: center; 
+    background-size: cover; 
+    border-radius: 15px;
 }
 
 /* Inner elements */
@@ -60,7 +63,6 @@
 }
 
 .tt-icon > i{
-    color: #000; 
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -72,7 +74,7 @@
 }
 
 .tt-title{
-     font-size: var(--f7-timeline-item-title-font-size); 
+    font-size: var(--f7-timeline-item-title-font-size); 
     font-weight: var(--f7-timeline-item-title-font-weight);
     line-height: var(--f7-timeline-item-title-line-height);
 }
@@ -90,10 +92,10 @@
     flex-shrink: 10;
 }
 
+/* Mock data for device list */
 .skeleton-text div{
     /* padding: 0; */
 }
-
 .settings-modal-right-text {
     /* font-size: 12px; */
     overflow: hidden;
@@ -101,3 +103,16 @@
     padding-left: 40px;
     white-space: pre;
 }
+
+/* Buttons with bg color style */
+body.theme-dark .img_no_bg:nth-child(1) { background: #f7b267; } /* 058ED9 */
+body.theme-dark .img_no_bg:nth-child(2) { background: #f79d65; } /* FF3562 */
+body.theme-dark .img_no_bg:nth-child(3) { background: #f4845f; } /* 8338EC */
+body.theme-dark .img_no_bg:nth-child(4) { background: #f27059; }
+body.theme-dark .img_no_bg:nth-child(5) { background: #f25c54; }
+
+.img_no_bg:nth-child(5) { background: #240046; }
+.img_no_bg:nth-child(4) { background: #3C096C; }
+.img_no_bg:nth-child(3) { background: #5A189A; }
+.img_no_bg:nth-child(2) { background: #7B2CBF; }
+.img_no_bg:nth-child(1) { background: #9D4EDD; }

@@ -20,21 +20,22 @@ function tryVibrate(time) {
     catch (error) { return false; }
 }
 
+// Main vibrate function for old iphones
+function tryLightTapticVibrate() {
+    try { TapticEngine.unofficial.weakBoom(); } catch (ex) { }
+}
+
 // Tap for different devices
 export function tapKeyVibrate() {
-    // FIXME: Deprecated
-    if (getDevice().ios) try { TapticEngine.unofficial.weakBoom(); } catch (ex) { }
-
-    tryVibrate(getDevice().ios ? 'medium' : 8);
+    if (device.ios) tryLightTapticVibrate(); // FIXME: Deprecated
+    tryVibrate(device.ios ? 'medium' : 8);
 }
 
 
 // Tap for different devices
 export function tapVibrate() {
-    // FIXME: Deprecated
-    if (getDevice().ios) try { TapticEngine.unofficial.weakBoom(); } catch (ex) { }
-
-    tryVibrate(getDevice().ios ? 'light' : 4);
+    if (device.ios) tryLightTapticVibrate(); // FIXME: Deprecated
+    tryVibrate(device.ios ? 'light' : 4);
 }
 
 // Shake vibration

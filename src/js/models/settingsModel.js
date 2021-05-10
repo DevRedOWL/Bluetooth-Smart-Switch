@@ -17,6 +17,10 @@ export default class SettingsModel extends ILocalStoreable {
     get darkMode() { return this._darkMode ? true : false; }
     set darkMode(val) { this._darkMode = val; }
 
+    /* Language */
+    get appLanguage() { return this._appLanguage ? this._appLanguage : 'en'; }
+    set appLanguage(val) { this._appLanguage = val; }
+
     /* accessCode */
     get accessCode() { return this._accessCode ? this._accessCode : 'sotout'; }
     set accessCode(val) { this._accessCode = val; }

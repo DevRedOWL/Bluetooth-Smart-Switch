@@ -23,59 +23,62 @@
                 <div class="block-title" style="font-size: 25px; height: 28px; margin: 20px 0 0 5px;">
                     Custom
                 </div>
-                <div class="img_no_bg" style="background: #058ED9;" @click="${switchDarkMode}">
-                    <div class="bg_darker">
-                        <div class="tt-icon">
-                            <i class="icon f7-icons" style="background-image: url('../static/icons/bar.png');">
-                                ${settings.value.darkMode ? 'sun_min' : 'moon'}
-                            </i>
-                        </div>
-                        <div class="tt-content">
-                            <div class="tt-title">${settings.value.darkMode ? 'Light' : 'Dark'} mode</div>
-                            <div class="tt-subtitle">${settings.value.darkMode ? 'Dark' : 'Light'} mode enabled</div>
+                <div id="custom-settings">
+                    <div class="img_no_bg" @click="${switchDarkMode}">
+                        <div class="bg_darker">
+                            <div class="tt-icon">
+                                <i class="icon f7-icons" style="background-image: url('../static/icons/bar.png');">
+                                    ${settings.value.darkMode ? 'sun_min' : 'moon'}
+                                </i>
+                            </div>
+                            <div class="tt-content">
+                                <div class="tt-title">${settings.value.darkMode ? 'Light' : 'Dark'} mode</div>
+                                <div class="tt-subtitle">${settings.value.darkMode ? 'Dark' : 'Light'} mode enabled
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="img_no_bg" style="background: #FF3562;" @click="${setaccessCode}">
-                    <div class="bg_darker">
-                        <div class="tt-icon">
-                            <i class="icon f7-icons" style="background-image: url('../static/icons/bar.png');">lock</i>
+                    <div class="img_no_bg" @click="${setaccessCode}">
+                        <div class="bg_darker">
+                            <div class="tt-icon">
+                                <i class="icon f7-icons"
+                                    style="background-image: url('../static/icons/bar.png');">lock</i>
+                            </div>
+                            <div class="tt-content">
+                                <div class="tt-title">Access code</div>
+                                <div class="tt-subtitle" style="width: 80%; overflow: hidden;">
+                                    ${settings.value.accessCode.replace(/./g, '•')}
+                                </div>
+                            </div>
                         </div>
-                        <div class="tt-content">
-                            <div class="tt-title">Access code</div>
-                            <div class="tt-subtitle" style="width: 95%; overflow: hidden;">
-                                ${settings.value.accessCode.replace(/./g, '•')}
+                    </div>
+                    <div class="img_no_bg" @click="${setDeviceTag}">
+                        <div class="bg_darker">
+                            <div class="tt-icon">
+                                <i class="icon f7-icons">tag</i>
+                            </div>
+                            <div class="tt-content">
+                                <div class="tt-title">Device tag</div>
+                                <div class="tt-subtitle">
+                                    ${settings.value.deviceTag}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img_no_bg" @click="${switchLanguage}">
+                        <div class="bg_darker">
+                            <div class="tt-icon">
+                                <i class="icon f7-icons">textformat_abc</i>
+                            </div>
+                            <div class="tt-content">
+                                <div class="tt-title">Language</div>
+                                <div class="tt-subtitle">
+                                    ${settings.value.appLanguage}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="img_no_bg" style="background: #8338EC;" @click="${setDeviceTag}">
-                    <div class="bg_darker">
-                        <!-- 8338EC 329F5B B4ADEA -->
-                        <div class="tt-icon">
-                            <i class="icon f7-icons">tag</i>
-                        </div>
-                        <div class="tt-content">
-                            <div class="tt-title">Device tag</div>
-                            <div class="tt-subtitle">
-                                ${settings.value.deviceTag}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- <div class="img_no_bg" style="background: #B4ADEA;" @click="${setDeviceTag}">
-                    <div class="bg_darker">
-                        <div class="tt-icon">
-                            <i class="icon f7-icons">arrow_counterclockwise</i>
-                        </div>
-                        <div class="tt-content">
-                            <div class="tt-title">Drop settings</div>
-                            <div class="tt-subtitle">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
             </div>
         </div>
         <!-- Modals -->
@@ -87,26 +90,26 @@
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
                                 <div style="font-size: 18px;"><b>Device:</b></div>
-                                <div class="yellow-text settings-modal-right-text">${settings.value.deviceSSID}</div>
+                                <div class="accent-text settings-modal-right-text">${settings.value.deviceSSID}</div>
                             </div>
                         </div>
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
                                 <div style="font-size: 18px;"><b>UUID:</b></div>
-                                <div class="yellow-text settings-modal-right-text">${settings.value.deviceUUID}</div>
+                                <div class="accent-text settings-modal-right-text">${settings.value.deviceUUID}</div>
                             </div>
                         </div>
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
                                 <div style="font-size: 18px;"><b>Service:</b></div>
-                                <div class="yellow-text settings-modal-right-text">${settings.value.deviceServiceUUID}
+                                <div class="accent-text settings-modal-right-text">${settings.value.deviceServiceUUID}
                                 </div>
                             </div>
                         </div>
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
                                 <div style="font-size: 18px;"><b>Characteristic:</b></div>
-                                <div class="yellow-text settings-modal-right-text">
+                                <div class="accent-text settings-modal-right-text">
                                     ${settings.value.deviceCharacteristicUUID}</div>
                             </div>
                         </div>
@@ -156,18 +159,39 @@
 </template>
 <script>
     import debugToast from '../js/debugToaster.js';
-    import { tapVibrate, shakeVibrate } from '../js/vibrate.js'
+    import {
+        tapVibrate,
+        shakeVibrate
+    } from '../js/vibrate.js'
 
-    export default (props, { $f7, $, $store }) => {
+    export default (props, {
+        $f7,
+        $,
+        $store
+    }) => {
         // State management via store object
         const settings = $store.getters.settings;
         const btDevices = $store.getters.btDevices;
         const scanState = $store.getters.scanState;
         // State encapsulation
-        const updateSettings = (propName, propValue) => { $store.dispatch('updateSettings', { propName, propValue }); }
-        const addDevice = (ssid, uuid) => { $store.dispatch('addBTDevice', { ssid, uuid }); }
-        const clearDevices = (ssid, uuid) => { $store.dispatch('clearBTDevices'); }
-        const setScanState = (newState) => { $store.dispatch('setScanState', newState); }
+        const updateSettings = (propName, propValue) => {
+            $store.dispatch('updateSettings', {
+                propName,
+                propValue
+            });
+        }
+        const addDevice = (ssid, uuid) => {
+            $store.dispatch('addBTDevice', {
+                ssid,
+                uuid
+            });
+        }
+        const clearDevices = (ssid, uuid) => {
+            $store.dispatch('clearBTDevices');
+        }
+        const setScanState = (newState) => {
+            $store.dispatch('setScanState', newState);
+        }
 
         // UX
         function shakeSearchBtn() {
@@ -190,25 +214,35 @@
         // Access code
         function setaccessCode() {
             tapVibrate();
-            $f7.dialog.password('Enter new access code', function (accessCode) {
-                if (accessCode.length > 255) {
-                    return notificatie('pencil_ellipsis_rectangle', 'Error', 'Access code can not be large, than 255 symbols');
-                }
-                updateSettings('accessCode', accessCode);
-                notificatie('lock', 'Settings', 'Access code updated');
-            });
+            $f7.dialog.password('Enter new access code',
+                function (accessCode) {
+                    if (accessCode.length > 255) {
+                        return notificatie('pencil_ellipsis_rectangle', 'Error', 'Access code can not be large, than 255 symbols');
+                    }
+                    tapVibrate();
+                    updateSettings('accessCode', accessCode);
+                    notificatie('lock', 'Settings', 'Access code updated');
+                });
         }
 
         // Device tag
         function setDeviceTag() {
             tapVibrate();
-            $f7.dialog.prompt('Enter new device tag', function (deviceTag) {
-                if (deviceTag.length > 16) {
-                    return notificatie('pencil_ellipsis_rectangle', 'Error', 'Device tag can not be large, than 16 symbols');
-                }
-                updateSettings('deviceTag', deviceTag);
-                notificatie('tag', 'Settings', 'Device tag updated');
-            });
+            $f7.dialog.prompt('Enter new device tag',
+                function (deviceTag) {
+                    if (deviceTag.length > 16) {
+                        return notificatie('pencil_ellipsis_rectangle', 'Error', 'Device tag can not be large, than 16 symbols');
+                    }
+                    tapVibrate();
+                    updateSettings('deviceTag', deviceTag);
+                    notificatie('tag', 'Settings', 'Device tag updated');
+                });
+        }
+
+        function switchLanguage() {
+            tapVibrate();
+            updateSettings('appLanguage', settings.value.appLanguage == 'en' ? 'ru' : 'en');
+            notificatie('textformat', 'Settings', 'Application language updated');
         }
 
         // Search devies
@@ -216,14 +250,18 @@
             tapVibrate();
             sheet.open();
         }
+
         function selectDevice(data) {
-            $f7.dialog.confirm(`Select device ${this.ssid} with UUID ${this.uuid}?`, () => {
-                notificatie('dot_radiowaves_left_right', 'Settings', 'Device selected');
-                sheet.close();
-                updateSettings('deviceSSID', this.ssid);
-                updateSettings('deviceUUID', this.uuid);
-            });
+            $f7.dialog.confirm(`Select device ${this.ssid} with UUID ${this.uuid}?`,
+                () => {
+                    tapVibrate();
+                    notificatie('dot_radiowaves_left_right', 'Settings', 'Device selected');
+                    sheet.close();
+                    updateSettings('deviceSSID', this.ssid);
+                    updateSettings('deviceUUID', this.uuid);
+                });
         }
+
         function scanForDevices() {
             clearDevices();
             sheet.stepOpen();
@@ -239,6 +277,7 @@
                 });
             setScanState(true);
         }
+
         function searchDevices() {
             try {
                 if (scanState.value == false) {
@@ -253,8 +292,7 @@
                             notificatie('placemark', 'Search error', 'GPS is disabled', 'Enable location services to scan devices');
                         }
                     );
-                }
-                else {
+                } else {
                     setScanState(false);
                     ble.stopScan(
                         // On stop successful  
@@ -266,8 +304,7 @@
                         });
                 }
                 tapVibrate();
-            }
-            catch (error) {
+            } catch (error) {
                 shakeSearchBtn();
                 notificatie('device_laptop', 'Error', error, `It seems that this device doesn't support Bluetooth LE`);
             }
@@ -292,12 +329,16 @@
 
                     },
                     close: function (sheet) {
-                        try { setScanState(false); ble.stopScan(() => { }, () => { }); } catch (error) { }
+                        try {
+                            setScanState(false);
+                            ble.stopScan(() => { }, () => { });
+                        } catch (error) { }
                     }
                 }
             });
             searchBtn = $('#searchBtn')[0];
         });
+
         function notificatie(icon, title, subtitle, text) {
             $f7.notification.create({
                 icon: `<i class="f7-icons icon">${icon}</i>`,

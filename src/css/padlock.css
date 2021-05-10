@@ -15,14 +15,21 @@
     height: 200px;
     background-image: linear-gradient(
         to bottom right,
-        #f2bc23 49.9%,
-        #eab02a 50%
+        #7a00f4 49.9%,
+        #7000e0 50%
     );
     border-radius: 20px 20px 100px 100px;
     margin-top: calc(50% - 30px);
     cursor: pointer;
     /* Хитрейший трюк для анимаций с псевдоэлементами, чтобы Z-index не бился */
     transform-style: preserve-3d;
+}
+body.theme-dark .padlock {
+    background-image: linear-gradient(
+        to bottom right,
+        #f2bc23 49.9%,
+        #eab02a 50%
+    );
 }
 
 .padlock::before {
@@ -110,7 +117,7 @@
         to bottom right,
         #e01e10 49.9%,
         #c91b0f 50%
-    );
+    ) !important;
 }
 
 @keyframes shake {
