@@ -47,7 +47,7 @@
                     </div>
                     ${
                     settings.value.isAdmin ? $h`
-                    <div class="img_no_bg" @click="${setaccessCode}">
+                    <div class="img_no_bg" @click="${setAccessCode}">
                         <div class="bg_darker">
                             <div class="tt-icon">
                                 <i class="icon f7-icons"
@@ -57,6 +57,24 @@
                                 <div class="tt-title">${L('ACCESS_CODE')}</div>
                                 <div class="tt-subtitle" style="width: 80%; overflow: hidden;">
                                     ${settings.value.accessCode.replace(/./g, '•')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="img_no_bg" @click="${toggleShake}">
+                        <div class="bg_darker">
+                            <div class="tt-icon">
+                                <i class="icon f7-icons">
+                                    ${settings.value.isShakeEnabled ? 'bolt_slash' : 'bolt'}
+                                </i>
+                            </div>
+                            <div class="tt-content">
+                                <div class="tt-title"
+                                    style="width: 100%; overflow: hidden; white-space: pre; text-overflow: ellipsis;">
+                                    ${L('SETTING_SHAKE')}
+                                </div>
+                                <div class="tt-subtitle">
+                                    ${settings.value.isShakeEnabled ? L('SHAKE_ENABLED') : L('SHAKE_DISABLED')}
                                 </div>
                             </div>
                         </div>
@@ -240,7 +258,7 @@
         }
 
         // Access code
-        function setaccessCode() {
+        function setAccessCode() {
             tapVibrate();
             $f7.dialog.password(L('ENTER_ACCESS_CODE'),
                 function (accessCode) {
@@ -251,6 +269,15 @@
                     updateSettings('accessCode', accessCode);
                     notificatie('lock', L('SETTINGS'), L('ACCESS_CODE_UPDATED'));
                 });
+        }
+
+        // Device shaking
+        function toggleShake() {
+            updateSettings('isShakeEnabled', !settings.value.isShakeEnabled);
+            return notificatie(
+                settings.value.isShakeEnabled ? 'bolt' : 'bolt_slash',
+                L('SETTINGS'),
+                settings.value.isShakeEnabled ? L('SHAKE_ENABLED') : L('SHAKE_DISABLED'));
         }
 
         // Device tag
@@ -278,11 +305,10 @@
             tapVibrate();
             if (!settings.value.isAdmin) {
                 $f7.dialog.password(L('ENTER_ADMIN_PASS'),
-                    function (accessCode) {
+                    function (adminCode) {
                         tapVibrate();
-                        if (accessCode === 'четыресловавсекапсом' || accessCode === 'fourwordsallcaps') {
+                        if (adminCode === 'четыресловавсекапсом' || adminCode === 'fourwordsallcaps') {
                             updateSettings('isAdmin', true);
-                            updateSettings('accessCode', accessCode);
                             notificatie('person_crop_circle_badge_checkmark', L('SETTINGS'), L('ADMIN_MODE_ON'));
                         }
                         else {
@@ -332,17 +358,31 @@
         function searchDevices() {
             try {
                 if (scanState.value == false) {
-                    // If not android - start scan or check for gps enabled
-                    if (!$f7.device.android) scanForDevices();
-                    else ble.isLocationEnabled(
-                        () => {
-                            scanForDevices();
-                        },
-                        () => {
-                            shakeSearchBtn();
-                            notificatie('placemark', L('SEARCH_ERROR'), L('GPS_IS_DISABLED'), L('PLS_ENABLE_GPS'));
-                        }
-                    );
+                    // If android check for gps enabled
+                    if ($f7.device.android)
+                        ble.isLocationEnabled(
+                            () => {
+                                scanForDevices();
+                            },
+                            () => {
+                                shakeSearchBtn();
+                                notificatie('placemark', L('SEARCH_ERROR'), L('GPS_IS_DISABLED'), L('PLS_ENABLE_GPS'));
+                            }
+                        );
+                    // If ios - we need bluetooth enabled
+                    else if ($f7.device.ios)
+                        ble.isEnabled(
+                            () => {
+                                scanForDevices();
+                            },
+                            () => {
+                                shakeSearchBtn();
+                                notificatie('wifi_slash', L('SEARCH_ERROR'), L('BT_IS_DISABLED'), L('PLS_ENABLE_BT'));
+                            }
+                        );
+                    // Other platforms
+                    else scanForDevices();
+
                 } else {
                     setScanState(false);
                     ble.stopScan(
@@ -375,11 +415,11 @@
                 on: {
                     stepOpen: function (sheet) {
                         // Костылище пиздеец, зато работает
-                        console.log($('#sheet-device-info')[0])
+                        // console.log($('#sheet-device-info')[0])
                         $('.list.no-hairlines').css('height', `calc(70vh - ${$('#sheet-device-info')[0].clientHeight + 105}px)`);
                     },
                     stepClose: function (sheet) {
-                        
+
                     },
                     close: function (sheet) {
                         try {

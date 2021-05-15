@@ -81,23 +81,39 @@
     $(document).on('page:init', '.page[data-name="home"]', function (e) {
       // [!] Интересное замечание - даже если в закоменченном куске html кода есть несуществующая функция - не соберется
       padlock = $('#padlock')[0];
-
+      listenDeviceShaking();
       window._1 = openKeyPadlock; window._2 = openPadlock; window._3 = closePadlock;
     });
     // $('#padlock').on('taphold', () => { openKeyPadlock(); setTimeout(() => openPadlock(), 300); setTimeout(() => closePadlock(), 1000); });
 
+    function listenDeviceShaking() {
+      try {
+        shake.startWatch(
+          () => {
+            if (SettingsModel.get().isShakeEnabled) {
+              TryConnectAndSend();
+              // // Set padlock state
+              // if (padlockPressed) return; else padlockPressed = true;
+              // // Sample open
+              // setTimeout(() => openKeyPadlock(), 200); setTimeout(() => openPadlock(), 600);setTimeout(() => { closePadlock(); padlockPressed = false; }, 1400);
+            }
+          }, 70 /*, onError */);
+      }
+      catch (error) {
+        // Do nothing, shake is not available
+      }
+    }
 
     function _SendToDevice(deviceUUID, accessCode, serviceUUID, characteristicUUID) {
-      let scanTimeout = setTimeout(() => {
+      let connctTimeout = setTimeout(() => {
         ble.disconnect(deviceUUID);
         notificatie('clock', L('ERROR'), L('DEVICE_CONNECT_TIMEOUT'));
         shakePadlock();
       }, 6000);
-      notificatie('clock', 'test', deviceUUID + accessCode + serviceUUID, characteristicUUID);
       ble.connect(deviceUUID,
         // On connect success
         (connectData) => {
-          clearTimeout(scanTimeout);
+          clearTimeout(connctTimeout);
           console.log('Device connected');
           ble.writeWithoutResponse(
             // Request data
@@ -110,7 +126,10 @@
               try {
                 // Open animation and close it soon, if data succesfully written
                 openPadlock();
-                setTimeout(closePadlock, 2500);
+                setTimeout(() => {
+                  closePadlock();
+                  padlockPressed = false;
+                }, 2500);
                 console.log('Code sent');
               } catch (error) {
                 console.log(error.message, error.trace);
@@ -128,7 +147,7 @@
         },
         // On device disconnected or error
         () => {
-          clearTimeout(scanTimeout);
+          clearTimeout(connctTimeout);
           notificatie('wifi_exclamationmark', L('ERROR'), L('DEVICE_NA'));
           shakePadlock();
         });
@@ -136,6 +155,7 @@
 
     // Send a request
     function TryConnectAndSend(
+      event,
       deviceUUID = SettingsModel.get().deviceUUID,
       accessCode = SettingsModel.get().accessCode,
       serviceUUID = SettingsModel.get().deviceServiceUUID,
@@ -151,25 +171,33 @@
         try {
           // IOS Quirk: We need to scan before connect
           if ($f7.device.ios) {
-            let scanTimeout = setTimeout(() => {
-              ble.stopScan();
-              notificatie('wifi_exclamationmark', L('ERROR'), L('DEVICE_NOT_FOUND'));
-              shakePadlock();
-            }, 4000);
-            ble.startScan(
-              [],
-              (data) => {
-                if (data.id === SettingsModel.get().deviceUUID) {
+            ble.isEnabled(
+              () => {
+                let scanTimeout = setTimeout(() => {
                   ble.stopScan();
-                  clearTimeout(scanTimeout);
-                  _SendToDevice(data.id, accessCode, serviceUUID, characteristicUUID);
-                }
+                  notificatie('wifi_exclamationmark', L('ERROR'), L('DEVICE_NOT_FOUND'));
+                  shakePadlock();
+                }, 4000);
+                ble.startScan(
+                  [],
+                  (data) => {
+                    if (data.id === SettingsModel.get().deviceUUID) {
+                      ble.stopScan();
+                      clearTimeout(scanTimeout);
+                      _SendToDevice(data.id, accessCode, serviceUUID, characteristicUUID);
+                    }
+                  },
+                  () => {
+                    clearTimeout(scanTimeout);
+                    notificatie('wifi_exclamationmark', L('ERROR'), L('UNABLE_TO_SCAN'));
+                    shakePadlock();
+                  });
               },
               () => {
-                clearTimeout(scanTimeout);
-                notificatie('wifi_exclamationmark', L('ERROR'), L('UNABLE_TO_SCAN'));
                 shakePadlock();
-              });
+                notificatie('wifi_slash', L('ERROR'), L('BT_IS_DISABLED'), L('PLS_ENABLE_BT'));
+              }
+            );
           }
           // God save the android, it can connect directly with MAC address
           else {
@@ -181,7 +209,7 @@
           notificatie('device_laptop', L('ERROR'), error, L('BLE_ERROR'));
         }
       }, 250);
-      
+
     }
     return $render;
   }

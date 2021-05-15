@@ -21,13 +21,21 @@ export default class SettingsModel extends ILocalStoreable {
     get appLanguage() { return this._appLanguage ? this._appLanguage : 'en'; }
     set appLanguage(val) { this._appLanguage = val; }
 
-    /* accessCode */
+    /* Access code */
     get accessCode() { return this._accessCode ? this._accessCode : 'sotout'; }
     set accessCode(val) { this._accessCode = val; }
 
     /* Home button name */
     get deviceTag() { return this._deviceTag ? this._deviceTag : (this.appLanguage == 'ru' ? 'Дом' : 'Home'); }
     set deviceTag(val) { this._deviceTag = val; }
+
+    /* Admin mode */
+    get isAdmin() { return this._isAdmin ? true : false; }
+    set isAdmin(val) { this._isAdmin = val; }
+
+    /* Admin mode */
+    get isShakeEnabled() { return this._isShakeEnabled ? true : false; }
+    set isShakeEnabled(val) { this._isShakeEnabled = val; }
 
     /* Device name */
     get deviceSSID() { return this._deviceSSID ? this._deviceSSID : 'HC-08'; }
