@@ -16,6 +16,13 @@
     display: none  !important;
 }
 
+.img_bt_device_data{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    white-space: pre;
+}
+
 /* Buttons with bg and image */
 .img_w_bg, .img_no_bg{
     margin: 10px 0; 

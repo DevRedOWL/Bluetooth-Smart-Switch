@@ -10,9 +10,12 @@
                     style="background-image: url(./static/deviceBG.jpeg); background-position: bottom; margin-top: 10px;">
                     <div class="img_darker">
                         <div style="font-size: 20px;">${settings.value.deviceSSID}</div>
-                        <div style="font-size: 10px;">${settings.value.deviceUUID}
-                            <span
-                                style="padding-left: 4px;">[${settings.value.deviceServiceUUID}/${settings.value.deviceCharacteristicUUID}]</span>
+                        <div class="img_bt_device_data"
+                            style="font-size: 10px; ${settings.value.isAdmin ? '' : 'opacity: .4;'}">
+                            <span style="overflow: hidden; text-overflow: ellipsis;">${settings.value.deviceUUID}</span>
+                            <span style="padding-left: 4px;">
+                                [${settings.value.deviceServiceUUID}/${settings.value.deviceCharacteristicUUID}]
+                            </span>
                         </div>
                         <div style="opacity: 0.7;">
                             <a style="color: white;" href="#view-settings" class="tab-link">${settings.value.isAdmin ?
@@ -108,7 +111,7 @@
         <div class="sheet-modal search-devices-sheet" style="height:70vh; border-radius: 15px 15px 0 0;">
             <div class="swipe-handler can_swipe_down" style="height: 50px"></div>
             <div class="sheet-modal-inner">
-                <div class="sheet-modal-swipe-step can_swipe_down">
+                <div id="sheet-device-info" class="sheet-modal-swipe-step can_swipe_down">
                     <div class="padding">
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
@@ -116,6 +119,7 @@
                                 <div class="accent-text settings-modal-right-text">${settings.value.deviceSSID}</div>
                             </div>
                         </div>
+                        ${settings.value.isAdmin ? $h`
                         <div>
                             <div class="display-flex justify-content-space-between align-items-center">
                                 <div style="font-size: 18px;"><b>UUID:</b></div>
@@ -136,6 +140,7 @@
                                     ${settings.value.deviceCharacteristicUUID}</div>
                             </div>
                         </div>
+                        ` : ''}
                     </div>
                     <div class="padding-horizontal padding-bottom">
                         <a class="button button-large button-fill" id="searchBtn" @click="${searchDevices}">
@@ -146,7 +151,7 @@
                 </div>
                 <div class="block-title block-title-medium margin-top">${settings.value.isAdmin ? L('SELECT_DEVICE') :
                     L('AVAILABLE_DEVICES')}:</div>
-                <div class="list no-hairlines" style="height: calc(70vh - 332px); overflow-y: scroll;">
+                <div class="list no-hairlines" style="overflow-y: scroll;">
                     <ul>
                         ${
                         btDevices.value.length ?
@@ -275,7 +280,7 @@
                 $f7.dialog.password(L('ENTER_ADMIN_PASS'),
                     function (accessCode) {
                         tapVibrate();
-                        if (accessCode === 'четыресловавсекапсом') {
+                        if (accessCode === 'четыресловавсекапсом' || accessCode === 'fourwordsallcaps') {
                             updateSettings('isAdmin', true);
                             updateSettings('accessCode', accessCode);
                             notificatie('person_crop_circle_badge_checkmark', L('SETTINGS'), L('ADMIN_MODE_ON'));
@@ -287,7 +292,7 @@
             }
             else {
                 updateSettings('isAdmin', false);
-                notificatie('person', L('SETTINGS'), L('ADMIN_MODE_OFF'));
+                notificatie('person_alt_circle', L('SETTINGS'), L('ADMIN_MODE_OFF'));
             }
         }
 
@@ -369,10 +374,12 @@
                 backdrop: true,
                 on: {
                     stepOpen: function (sheet) {
-
+                        // Костылище пиздеец, зато работает
+                        console.log($('#sheet-device-info')[0])
+                        $('.list.no-hairlines').css('height', `calc(70vh - ${$('#sheet-device-info')[0].clientHeight + 105}px)`);
                     },
                     stepClose: function (sheet) {
-
+                        
                     },
                     close: function (sheet) {
                         try {
@@ -389,7 +396,7 @@
             $f7.notification.create({
                 icon: `<i class="f7-icons icon">${icon}</i>`,
                 title: title,
-                titleRightText: 'now',
+                titleRightText: L('NOW'),
                 subtitle: subtitle,
                 text: text,
                 closeTimeout: 2300,

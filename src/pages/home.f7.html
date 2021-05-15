@@ -11,14 +11,14 @@
     <div class="page-content">
 
       <div class="block padlock-parent">
-        <div id="padlock" class="padlock" @click="${ConnectAndSend}">
+        <div id="padlock" class="padlock" @click="${TryConnectAndSend}">
           <div class="keyhole"></div>
         </div>
       </div>
 
       <!-- <div class="block">
         <a href="" class="button button-fill button-round" style="width: 70%; margin: 0 auto;"
-          @click="${ConnectAndSend}">Click</a>
+          @click="${TryConnectAndSend}">Click</a>
       </div> -->
 
     </div>
@@ -35,7 +35,7 @@
     const L = (id) => Locales.value[id] ? Locales.value[id] : `$${id}`;
 
     // Ux elements
-    let padlock;
+    let padlock, padlockPressed = false;
     function openKeyPadlock() {
       tapKeyVibrate();
       padlock.classList.add('keyunlock');
@@ -54,13 +54,14 @@
       padlock.classList.remove('keyunlock');
       padlock.classList.add('shake');
       setTimeout(() => padlock.classList.remove('shake'), 820);
+      padlockPressed = false;
     };
     // Notificatior
     function notificatie(icon, title, subtitle, text) {
       $f7.notification.create({
         icon: `<i class="f7-icons icon">${icon}</i>`,
         title: title,
-        titleRightText: 'now',
+        titleRightText: L('NOW'),
         subtitle: subtitle,
         text: text,
         closeTimeout: 2000,
@@ -86,59 +87,101 @@
     // $('#padlock').on('taphold', () => { openKeyPadlock(); setTimeout(() => openPadlock(), 300); setTimeout(() => closePadlock(), 1000); });
 
 
+    function _SendToDevice(deviceUUID, accessCode, serviceUUID, characteristicUUID) {
+      let scanTimeout = setTimeout(() => {
+        ble.disconnect(deviceUUID);
+        notificatie('clock', L('ERROR'), L('DEVICE_CONNECT_TIMEOUT'));
+        shakePadlock();
+      }, 6000);
+      notificatie('clock', 'test', deviceUUID + accessCode + serviceUUID, characteristicUUID);
+      ble.connect(deviceUUID,
+        // On connect success
+        (connectData) => {
+          clearTimeout(scanTimeout);
+          console.log('Device connected');
+          ble.writeWithoutResponse(
+            // Request data
+            deviceUUID,
+            serviceUUID,
+            characteristicUUID,
+            stringToBytes(accessCode),
+            // On write success callback
+            () => {
+              try {
+                // Open animation and close it soon, if data succesfully written
+                openPadlock();
+                setTimeout(closePadlock, 2500);
+                console.log('Code sent');
+              } catch (error) {
+                console.log(error.message, error.trace);
+                shakePadlock();
+              }
+              // Disconnect
+              setTimeout(() => ble.disconnect(deviceUUID), 2000);
+            },
+            // On write error disconnect
+            () => {
+              notificatie('wifi_slash', L('ERROR'), L('CONNECTION_ERROR'));
+              shakePadlock(); // Disconnect animation            
+              setTimeout(() => ble.disconnect(deviceUUID), 2000); // Отключаемся от устройства
+            });
+        },
+        // On device disconnected or error
+        () => {
+          clearTimeout(scanTimeout);
+          notificatie('wifi_exclamationmark', L('ERROR'), L('DEVICE_NA'));
+          shakePadlock();
+        });
+    }
+
     // Send a request
-    function ConnectAndSend(
+    function TryConnectAndSend(
       deviceUUID = SettingsModel.get().deviceUUID,
       accessCode = SettingsModel.get().accessCode,
       serviceUUID = SettingsModel.get().deviceServiceUUID,
       characteristicUUID = SettingsModel.get().deviceCharacteristicUUID) {
+      // Set padlock state
+      if (padlockPressed) return;
+      else padlockPressed = true;
+      // Start working
       openKeyPadlock();
       // Connect to device in 200ms to proper aniation cycle
       setTimeout(() => {
         // Trying to connect to a device
         try {
-          ble.connect(deviceUUID,
-            // On connect success
-            (connectData) => {
-              console.log('Device connected');
-              ble.writeWithoutResponse(
-                // Request data
-                deviceUUID,
-                serviceUUID,
-                characteristicUUID,
-                stringToBytes(accessCode),
-                // On write success callback
-                () => {
-                  try {
-                    // Open animation and close it soon, if data succesfully written
-                    openPadlock();
-                    setTimeout(closePadlock, 2500);
-                    console.log('Code sent');
-                  } catch (error) {
-                    console.log(error.message, error.trace);
-                    shakePadlock();
-                  }
-                  // Disconnect
-                  setTimeout(() => ble.disconnect(deviceUUID), 2000);
-                },
-                // On write error disconnect
-                () => {
-                  notificatie('wifi_slash', L('ERROR'), L('CONNECTION_ERROR'));
-                  shakePadlock(); // Disconnect animation            
-                  setTimeout(() => ble.disconnect(deviceUUID), 2000); // Отключаемся от устройства
-                });
-            },
-            // On device disconnected or error
-            () => {
-              notificatie('wifi_exclamationmark', L('ERROR'), L('DEVICE_NA'));
+          // IOS Quirk: We need to scan before connect
+          if ($f7.device.ios) {
+            let scanTimeout = setTimeout(() => {
+              ble.stopScan();
+              notificatie('wifi_exclamationmark', L('ERROR'), L('DEVICE_NOT_FOUND'));
               shakePadlock();
-            });
+            }, 4000);
+            ble.startScan(
+              [],
+              (data) => {
+                if (data.id === SettingsModel.get().deviceUUID) {
+                  ble.stopScan();
+                  clearTimeout(scanTimeout);
+                  _SendToDevice(data.id, accessCode, serviceUUID, characteristicUUID);
+                }
+              },
+              () => {
+                clearTimeout(scanTimeout);
+                notificatie('wifi_exclamationmark', L('ERROR'), L('UNABLE_TO_SCAN'));
+                shakePadlock();
+              });
+          }
+          // God save the android, it can connect directly with MAC address
+          else {
+            _SendToDevice(deviceUUID, accessCode, serviceUUID, characteristicUUID);
+          }
         }
         catch (error) {
           shakePadlock();
           notificatie('device_laptop', L('ERROR'), error, L('BLE_ERROR'));
         }
       }, 250);
+      
     }
     return $render;
   }

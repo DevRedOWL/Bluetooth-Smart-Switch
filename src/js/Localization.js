@@ -7,6 +7,7 @@ const RU = {
     SETTINGS: 'Настройки',
     LOCK: 'замок',
     WITH: 'с',
+    NOW: 'сейчас',
 
     // Settings
     DEVICE_SETTINGS: 'Настройки устройства',
@@ -19,7 +20,7 @@ const RU = {
     CHARACTERISTIC: 'Характеристика',
     SEARCH: 'Поиск',
     STOP_SEARCH: 'Остановить поиск',
-    SWIPE_FOR_LIST: 'Свайп для просмотра списка устройств',
+    SWIPE_FOR_LIST: 'Проведите вверх для просмотра списка доступных устройств',
 
     // Settings buttons
     LIGHT_M: 'Светлая',
@@ -61,7 +62,9 @@ const RU = {
     STOP_SCAN_ERROR: 'Ошибка при остановке сканирования',
     BLE_ERROR: `Кажется, что ваше устройство не поддерживает Bluetooth LE`,
     DEVICE_NA: `Устройство недоступно`,
-    CONNECTION_ERROR: 'При подключении к устройству возникла ошибка'
+    CONNECTION_ERROR: 'При подключении к устройству возникла ошибка',
+    DEVICE_NOT_FOUND: 'Не удалось подключиться к устройству, возможно вы находитесь слишком далеко',
+    DEVICE_CONNECT_TIMEOUT: 'Время на подключение к устройству истекло'
 }
 
 const EN = {
@@ -71,6 +74,7 @@ const EN = {
     SETTINGS: 'Settings',
     LOCK: 'lock',
     WITH: 'with',
+    NOW: 'now',
 
     // Settings
     DEVICE_SETTINGS: 'Device settings',
@@ -125,7 +129,9 @@ const EN = {
     STOP_SCAN_ERROR: 'Scan stopping error',
     BLE_ERROR: `It seems that this device doesn't support Bluetooth LE`,
     DEVICE_NA: `Device is not available`,
-    CONNECTION_ERROR: 'An error occured during connection to device'
+    CONNECTION_ERROR: 'An error occured during connection to device',
+    DEVICE_NOT_FOUND: 'Unable to connect because device is out of range',
+    DEVICE_CONNECT_TIMEOUT: 'Unable to connect during the timeout'
 }
 
 export default function Localization() {
